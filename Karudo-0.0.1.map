@@ -1,0 +1,257 @@
+
+Hexadecimal
+
+Area                               Addr   Size   Decimal Bytes (Attributes)
+--------------------------------   ----   ----   ------- ----- ------------
+.  .ABS.                           0000   0000 =      0. bytes (ABS,CON)
+
+      Value  Global
+   --------  --------------------------------
+     0000    l__CABS
+     0000    l__CODE_1
+     0000    l__GSFINAL
+     0000    l__HEAP
+     0000    l__HOME
+     0000    l__LIT
+     0000    l__OVERLAY
+     0000    s__HEADER
+     0001    l__GSINITTAIL
+     005A    l__BSS
+     0083    l__GSINIT
+     0172    l__BASE
+     01E3    l__HEADER
+     0200    s__CODE
+     02B3    l__DATA
+     051E    l__CODE
+     071E    s__BASE
+     0890    s__LIT
+     4000    s__CODE_1
+     4000    s__GSINIT
+     4083    s__GSINITTAIL
+     4084    s__GSFINAL
+     C000    .OAM
+     C0A0    s__DATA
+     C353    s__BSS
+     C3AD    s__CABS
+     C3AD    s__HEAP
+     C3AD    s__HOME
+     C3AD    s__OVERLAY
+     E000    .STACK
+     FF80    .refresh_OAM
+
+Hexadecimal
+
+Area                               Addr   Size   Decimal Bytes (Attributes)
+--------------------------------   ----   ----   ------- ----- ------------
+_CODE                              0200   051E =   1310. bytes (REL,CON)
+
+      Value  Global
+   --------  --------------------------------
+     0210    .remove_VBL
+     0216    .remove_LCD
+     021C    .remove_TIM
+     0222    .remove_SIO
+     0228    .remove_JOY
+     022E    .add_VBL
+     0234    .add_LCD
+     023A    .add_TIM
+     0240    .add_SIO
+     0246    .add_JOY
+     024C    .remove_int
+     026C    .add_int
+     0288    .wait_vbl_done
+     0288    _wait_vbl_done
+     029F    .display_off
+     029F    _display_off
+     02C0    .serial_IO
+     02EF    _mode
+     02F8    _get_mode
+     02FD    _disable_interrupts
+     0306    _enable_interrupts
+     0310    _set_interrupts
+     031F    _remove_VBL
+     032A    _remove_LCD
+     0335    _remove_TIM
+     0340    _remove_SIO
+     034B    _remove_JOY
+     0356    _add_VBL
+     0361    _add_LCD
+     036C    _add_TIM
+     0377    _add_SIO
+     0382    _add_JOY
+     038D    banked_call
+     03AE    banked_ret
+     03BC    _f_DisplayMap
+     042E    _main
+     0459    _display_map
+     04BC    _game_init
+     04D7    _interrupt_init
+     04F9    _timer_interrupt
+     0514    _area_tiles_palette
+     053C    __initrleblock
+     0563    _set_bkg_palette_entry
+     058B    _set_sprite_palette_entry
+     05B3    _cpu_slow
+     05CE    _cpu_fast
+     05D5    _cgb_compatibility
+     061E    __divschar_rrx_s
+     0625    __divschar_rrx_hds
+     062C    __modschar_rrx_s
+     0633    __modschar_rrx_hds
+     0638    __divsint_rrx_s
+     0644    __divsint_rrx_hds
+     064C    __modsint_rrx_s
+     0658    __modsint_rrx_hds
+     065E    __divuchar_rrx_s
+     065E    __divuschar_rrx_s
+     0665    __divuchar_rrx_hds
+     066C    __moduchar_rrx_s
+     066C    __moduschar_rrx_s
+     0673    __moduchar_rrx_hds
+     0678    __divuint_rrx_s
+     0684    __divuint_rrx_hds
+     068C    __moduint_rrx_s
+     0698    __moduint_rrx_hds
+     069E    .div8
+     069E    .mod8
+     06A6    .div16
+     06A6    .mod16
+     06D8    .divu8
+     06D8    .modu8
+     06DB    .divu16
+     06DB    .modu16
+
+Hexadecimal
+
+Area                               Addr   Size   Decimal Bytes (Attributes)
+--------------------------------   ----   ----   ------- ----- ------------
+_HEADER                            0000   01E3 =    483. bytes (ABS,CON)
+
+      Value  Global
+   --------  --------------------------------
+     01DF    _exit
+
+Hexadecimal
+
+Area                               Addr   Size   Decimal Bytes (Attributes)
+--------------------------------   ----   ----   ------- ----- ------------
+_BASE                              071E   0172 =    370. bytes (REL,CON)
+
+      Value  Global
+   --------  --------------------------------
+     071E    _set_bkg_palette
+     0749    _set_sprite_palette
+     0774    _set_bkg_data
+     0774    _set_win_data
+     07C1    _set_sprite_data
+     07F0    .copy_vram
+     07FF    _get_data
+     07FF    _set_data
+     0812    _set_bkg_tiles
+     0826    .set_xy_wtt
+     0837    .set_xy_btt
+     0846    .set_xy_tt
+     0877    _set_tiles
+
+
+
+Hexadecimal
+
+Area                               Addr   Size   Decimal Bytes (Attributes)
+--------------------------------   ----   ----   ------- ----- ------------
+_GSINIT                            4000   0083 =    131. bytes (REL,CON)
+
+      Value  Global
+   --------  --------------------------------
+     4000    gsinit
+
+
+
+Hexadecimal
+
+Area                               Addr   Size   Decimal Bytes (Attributes)
+--------------------------------   ----   ----   ------- ----- ------------
+_DATA                              C0A0   02B3 =    691. bytes (REL,CON)
+
+      Value  Global
+   --------  --------------------------------
+     C0A0    _metatiles
+     C0AC    _map_room
+     C0FC    _TIMER_MOVE
+     C0FD    _GLOBAL_TIMER
+     C101    _seed
+     C103    _is_taken
+     C203    _link_map
+     C303    _area_tiles
+
+Hexadecimal
+
+Area                               Addr   Size   Decimal Bytes (Attributes)
+--------------------------------   ----   ----   ------- ----- ------------
+_BSS                               C353   005A =     90. bytes (REL,CON)
+
+      Value  Global
+   --------  --------------------------------
+     C353    __cpu
+     C354    .mode
+     C355    __io_out
+     C356    __io_in
+     C357    __io_status
+     C358    .vbl_done
+     C35B    .sys_time
+     C35B    _sys_time
+     C35D    .int_0x40
+     C36D    .int_0x48
+     C37D    .int_0x50
+     C38D    .int_0x58
+     C39D    .int_0x60
+
+Hexadecimal
+
+Area                               Addr   Size   Decimal Bytes (Attributes)
+--------------------------------   ----   ----   ------- ----- ------------
+_HEAP                              C3AD   0000 =      0. bytes (REL,CON)
+
+      Value  Global
+   --------  --------------------------------
+     C3AD    _malloc_heap_start
+
+
+
+MODULES
+	FILE D:\devlog\GBDK-3.0/lib/crt0.o
+		NAME Runtime
+	FILE obj/map.o
+		NAME map
+	FILE obj/room_map.o
+		NAME room_map
+	FILE obj/main.o
+		NAME main
+	FILE obj/room.o
+		NAME room
+LIBRARIES
+	LIBRARY D:\devlog\SDCC-2.9/device/lib/build/gbz80/gbz80.lib
+		MODULE crt0_rle
+	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
+		MODULE cgb.o
+	LIBRARY D:\devlog\SDCC-2.9/device/lib/build/gbz80/gbz80.lib
+		MODULE div
+	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
+		MODULE set_data.o
+	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
+		MODULE cpy_data.o
+	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
+		MODULE set_bk_t.o
+	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
+		MODULE set_xy_t.o
+USERBASEDEF
+	_CODE=0x200
+	_DATA=0xc0a0
+	_CODE_1=0x4000
+	_CODE_2=0x4000
+	_CODE_3=0x4000
+USERGLOBALDEF
+	.OAM=0xC000
+	.STACK=0xE000
+	.refresh_OAM=0xFF80
+	.init=0x0000

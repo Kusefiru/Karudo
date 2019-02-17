@@ -1,0 +1,238 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 2.9.0 #5416 (Apr  7 2010) (MINGW32)
+                              4 ; This file was generated Sun Feb 10 22:24:29 2019
+                              5 ;--------------------------------------------------------
+                              6 	.module main
+                              7 	.optsdcc -mgbz80
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _main
+                             13 	.globl _link_map
+                             14 	.globl _is_taken
+                             15 	.globl _seed
+                             16 	.globl _GLOBAL_TIMER
+                             17 	.globl _TIMER_MOVE
+                             18 	.globl _display_map
+                             19 	.globl _game_init
+                             20 	.globl _interrupt_init
+                             21 	.globl _timer_interrupt
+                             22 ;--------------------------------------------------------
+                             23 ;  ram data
+                             24 ;--------------------------------------------------------
+                             25 	.area _DATA
+   0000                      26 _TIMER_MOVE::
+   0000                      27 	.ds 1
+   0001                      28 _GLOBAL_TIMER::
+   0001                      29 	.ds 4
+   0005                      30 _seed::
+   0005                      31 	.ds 2
+   0007                      32 _is_taken::
+   0007                      33 	.ds 256
+   0107                      34 _link_map::
+   0107                      35 	.ds 256
+                             36 ;--------------------------------------------------------
+                             37 ; overlayable items in  ram 
+                             38 ;--------------------------------------------------------
+                             39 	.area _OVERLAY
+                             40 ;--------------------------------------------------------
+                             41 ; external initialized ram data
+                             42 ;--------------------------------------------------------
+                             43 ;--------------------------------------------------------
+                             44 ; global & static initialisations
+                             45 ;--------------------------------------------------------
+                             46 	.area _HOME
+                             47 	.area _GSINIT
+                             48 	.area _GSFINAL
+                             49 	.area _GSINIT
+                             50 ;--------------------------------------------------------
+                             51 ; Home
+                             52 ;--------------------------------------------------------
+                             53 	.area _HOME
+                             54 	.area _HOME
+                             55 ;--------------------------------------------------------
+                             56 ; code
+                             57 ;--------------------------------------------------------
+                             58 	.area _CODE
+                             59 ;src/main.c:28: void main(void)
+                             60 ;	---------------------------------
+                             61 ; Function main
+                             62 ; ---------------------------------
+   0000                      63 _main:
+                             64 	
+                             65 ;src/main.c:30: game_init();
+   0000 CDr8Es00             66 	call	_game_init
+                             67 ;src/main.c:32: set_bkg_palette(0,5,area_tiles_palette);
+   0003 21r00s00             68 	ld	hl,#_area_tiles_palette
+   0006 E5                   69 	push	hl
+   0007 21 00 05             70 	ld	hl,#0x0500
+   000A E5                   71 	push	hl
+   000B CDr00s00             72 	call	_set_bkg_palette
+   000E E8 04                73 	lda	sp,4(sp)
+                             74 ;src/main.c:33: set_bkg_data(0,5,area_tiles);
+   0010 21r00s00             75 	ld	hl,#_area_tiles
+   0013 E5                   76 	push	hl
+   0014 21 00 05             77 	ld	hl,#0x0500
+   0017 E5                   78 	push	hl
+   0018 CDr00s00             79 	call	_set_bkg_data
+   001B E8 04                80 	lda	sp,4(sp)
+                             81 ;src/main.c:35: f_DisplayMap(map_room, metatiles);
+   001D 21r00s00             82 	ld	hl,#_metatiles
+   0020 E5                   83 	push	hl
+   0021 21r00s00             84 	ld	hl,#_map_room
+   0024 E5                   85 	push	hl
+   0025 CDr00s00             86 	call	_f_DisplayMap
+   0028 E8 04                87 	lda	sp,4(sp)
+   002A                      88 00101$:
+                             89 	
+   002A C9                   90 ret
+                             91 ;src/main.c:40: void display_map(void)
+                             92 ;	---------------------------------
+                             93 ; Function display_map
+                             94 ; ---------------------------------
+   002B                      95 _display_map:
+                             96 	
+   002B F5                   97 	push	af
+                             98 ;src/main.c:42: set_bkg_palette(0,5,area_tiles_palette);
+   002C 21r00s00             99 	ld	hl,#_area_tiles_palette
+   002F E5                  100 	push	hl
+   0030 21 00 05            101 	ld	hl,#0x0500
+   0033 E5                  102 	push	hl
+   0034 CDr00s00            103 	call	_set_bkg_palette
+   0037 E8 04               104 	lda	sp,4(sp)
+                            105 ;src/main.c:43: set_bkg_data(0,5,area_tiles);
+   0039 21r00s00            106 	ld	hl,#_area_tiles
+   003C E5                  107 	push	hl
+   003D 21 00 05            108 	ld	hl,#0x0500
+   0040 E5                  109 	push	hl
+   0041 CDr00s00            110 	call	_set_bkg_data
+   0044 E8 04               111 	lda	sp,4(sp)
+                            112 ;src/main.c:45: VBK_REG = 1;
+   0046 01 4F FF            113 	ld	bc,#0xFF4F
+   0049 3E 01               114 	ld	a,#0x01
+   004B 02                  115 	ld	(bc),a
+                            116 ;src/main.c:46: set_bkg_tiles(0, 0, _DungeonMapWidth, _DungeonMapHeight, map_room);
+   004C 21r00s00            117 	ld	hl,#_map_room
+   004F E5                  118 	push	hl
+   0050 21 14 10            119 	ld	hl,#0x1014
+   0053 E5                  120 	push	hl
+   0054 21 00 00            121 	ld	hl,#0x0000
+   0057 E5                  122 	push	hl
+   0058 CDr00s00            123 	call	_set_bkg_tiles
+   005B E8 06               124 	lda	sp,6(sp)
+                            125 ;src/main.c:47: VBK_REG = 0;
+   005D 01 4F FF            126 	ld	bc,#0xFF4F
+   0060 3E 00               127 	ld	a,#0x00
+   0062 02                  128 	ld	(bc),a
+                            129 ;src/main.c:48: set_bkg_tiles(0, 0, _DungeonMapWidth, _DungeonMapHeight, map_room);
+   0063 21r00s00            130 	ld	hl,#_map_room
+   0066 E5                  131 	push	hl
+   0067 21 14 10            132 	ld	hl,#0x1014
+   006A E5                  133 	push	hl
+   006B 21 00 00            134 	ld	hl,#0x0000
+   006E E5                  135 	push	hl
+   006F CDr00s00            136 	call	_set_bkg_tiles
+   0072 E8 06               137 	lda	sp,6(sp)
+                            138 ;src/main.c:49: SHOW_BKG;
+   0074 F8 00               139 	lda	hl,0(sp)
+   0076 36 40               140 	ld	(hl),#0x40
+   0078 23                  141 	inc	hl
+   0079 36 FF               142 	ld	(hl),#0xFF
+   007B 01 40 FF            143 	ld	bc,#0xFF40
+   007E 0A                  144 	ld	a,(bc)
+   007F 4F                  145 	ld	c,a
+   0080 06 00               146 	ld	b,#0x00
+   0082 79                  147 	ld	a,c
+   0083 F6 01               148 	or	a,#0x01
+   0085 4F                  149 	ld	c,a
+   0086 2B                  150 	dec	hl
+   0087 5E                  151 	ld	e,(hl)
+   0088 23                  152 	inc	hl
+   0089 56                  153 	ld	d,(hl)
+   008A 12                  154 	ld	(de),a
+   008B                     155 00101$:
+   008B E8 02               156 	lda	sp,2(sp)
+   008D C9                  157 ret
+                            158 ;src/main.c:53: void game_init(void)
+                            159 ;	---------------------------------
+                            160 ; Function game_init
+                            161 ; ---------------------------------
+   008E                     162 _game_init:
+                            163 	
+                            164 ;src/main.c:55: GLOBAL_TIMER = 0;
+   008E AF                  165 	xor	a,a
+   008F 21r01s00            166 	ld	hl,#_GLOBAL_TIMER
+   0092 77                  167 	ld	(hl),a
+   0093 21r02s00            168 	ld	hl,#_GLOBAL_TIMER + 1
+   0096 77                  169 	ld	(hl),a
+   0097 21r03s00            170 	ld	hl,#_GLOBAL_TIMER + 2
+   009A 77                  171 	ld	(hl),a
+   009B 21r04s00            172 	ld	hl,#_GLOBAL_TIMER + 3
+   009E 77                  173 	ld	(hl),a
+                            174 ;src/main.c:56: TAC_REG = 0x07U;
+   009F 01 07 FF            175 	ld	bc,#0xFF07
+   00A2 3E 07               176 	ld	a,#0x07
+   00A4 02                  177 	ld	(bc),a
+                            178 ;src/main.c:58: interrupt_init();
+   00A5 CDrA9s00            179 	call	_interrupt_init
+   00A8                     180 00101$:
+                            181 	
+   00A8 C9                  182 ret
+                            183 ;src/main.c:61: void interrupt_init(void)
+                            184 ;	---------------------------------
+                            185 ; Function interrupt_init
+                            186 ; ---------------------------------
+   00A9                     187 _interrupt_init:
+                            188 	
+                            189 ;src/main.c:63: disable_interrupts();
+   00A9 CDr00s00            190 	call	_disable_interrupts
+                            191 ;src/main.c:64: add_TIM(timer_interrupt);
+   00AC 21rCBs00            192 	ld	hl,#_timer_interrupt
+   00AF E5                  193 	push	hl
+   00B0 CDr00s00            194 	call	_add_TIM
+   00B3 E8 02               195 	lda	sp,2(sp)
+                            196 ;src/main.c:65: add_VBL(timer_interrupt);
+   00B5 21rCBs00            197 	ld	hl,#_timer_interrupt
+   00B8 E5                  198 	push	hl
+   00B9 CDr00s00            199 	call	_add_VBL
+   00BC E8 02               200 	lda	sp,2(sp)
+                            201 ;src/main.c:66: enable_interrupts();
+   00BE CDr00s00            202 	call	_enable_interrupts
+                            203 ;src/main.c:68: set_interrupts(VBL_IFLAG | TIM_IFLAG);
+   00C1 3E 05               204 	ld	a,#0x05
+   00C3 F5                  205 	push	af
+   00C4 33                  206 	inc	sp
+   00C5 CDr00s00            207 	call	_set_interrupts
+   00C8 E8 01               208 	lda	sp,1(sp)
+   00CA                     209 00101$:
+                            210 	
+   00CA C9                  211 ret
+                            212 ;src/main.c:71: void timer_interrupt(void)
+                            213 ;	---------------------------------
+                            214 ; Function timer_interrupt
+                            215 ; ---------------------------------
+   00CB                     216 _timer_interrupt:
+                            217 	
+                            218 ;src/main.c:73: GLOBAL_TIMER++;
+   00CB 21r01s00            219 	ld	hl,#_GLOBAL_TIMER
+   00CE 34                  220 	inc	(hl)
+   00CF 20 10               221 	jr	NZ,00103$
+   00D1 21r02s00            222 	ld	hl,#_GLOBAL_TIMER + 1
+   00D4 34                  223 	inc	(hl)
+   00D5 20 0A               224 	jr	NZ,00103$
+   00D7 21r03s00            225 	ld	hl,#_GLOBAL_TIMER + 2
+   00DA 34                  226 	inc	(hl)
+   00DB 20 04               227 	jr	NZ,00103$
+   00DD 21r04s00            228 	ld	hl,#_GLOBAL_TIMER + 3
+   00E0 34                  229 	inc	(hl)
+   00E1                     230 00103$:
+                            231 ;src/main.c:74: TIMER_MOVE++;
+   00E1 21r00s00            232 	ld	hl,#_TIMER_MOVE
+   00E4 34                  233 	inc	(hl)
+   00E5                     234 00101$:
+                            235 	
+   00E5 C9                  236 ret
+                            237 	.area _CODE
+                            238 	.area _CABS

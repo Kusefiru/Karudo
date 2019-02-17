@@ -35,7 +35,7 @@ CC = $(SDCCDIR)/bin/sdcc.bat
 CCFLAGS = $(INCLUDE)
 AS = $(SDCCDIR)/bin/as-gbz80
 ASFLAGS = -lpo
-LINK = $(SDCCDIR)/bin/link-gbz80 -- -m -u -b_CODE=0x200 -b_DATA=0xc0a0 -yo4 -yt1
+LINK = $(SDCCDIR)/bin/link-gbz80 -- -m -u -b_CODE=0x200 -b_DATA=0xc0a0 -yp0x143=0x80 -yo4 -yt1
 
 #===============================================#
 # Liste des fichiers
@@ -62,5 +62,5 @@ $(OBJDIR)/%.o: $(ASMDIR)/%.s
 #===============================================#
 # Directive de clean
 clean:
-	rm -f *.gb
+	rm -f *.gb *.map
 	rm -f $(OBJDIR)/*

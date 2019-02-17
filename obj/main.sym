@@ -1,0 +1,39 @@
+ASxxxx Assembler V01.75 + SDCC mods  (GameBoy Z80-like CPU), page 1.
+
+Symbol Table
+
+  1 _GLOBAL_TIMER                                                  0001 GR
+  1 _TIMER_MOVE                                                    0000 GR
+    _add_TIM                                                       **** GX
+    _add_VBL                                                       **** GX
+    _area_tiles                                                    **** GX
+    _area_tiles_palette                                            **** GX
+    _disable_interrupts                                            **** GX
+  0 _display_map                                                   002B GR
+    _enable_interrupts                                             **** GX
+    _f_DisplayMap                                                  **** GX
+  0 _game_init                                                     008E GR
+  0 _interrupt_init                                                00A9 GR
+  1 _is_taken                                                      0007 GR
+  1 _link_map                                                      0107 GR
+  0 _main                                                          0000 GR
+    _map_room                                                      **** GX
+    _metatiles                                                     **** GX
+  1 _seed                                                          0005 GR
+    _set_bkg_data                                                  **** GX
+    _set_bkg_palette                                               **** GX
+    _set_bkg_tiles                                                 **** GX
+    _set_interrupts                                                **** GX
+  0 _timer_interrupt                                               00CB GR
+
+ASxxxx Assembler V01.75 + SDCC mods  (GameBoy Z80-like CPU), page 2.
+
+Area Table
+
+   0 _CODE                                                          size   E6   flags 0
+   1 _DATA                                                          size  207   flags 0
+   2 _OVERLAY                                                       size    0   flags 0
+   3 _HOME                                                          size    0   flags 0
+   4 _GSINIT                                                        size    0   flags 0
+   5 _GSFINAL                                                       size    0   flags 0
+   6 _CABS                                                          size    0   flags 0
