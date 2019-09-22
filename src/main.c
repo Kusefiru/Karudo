@@ -29,7 +29,10 @@ T_U08 link_map[MAX_ROOMS*8];
 T_U08 CHAR_X;
 T_U08 CHAR_Y;
 T_U08 CHAR_LAST_ANIM;
+T_U08 CHAR_LAST_ATTACK;
+T_U08 CHAR_MOVING;
 T_U08 CHAR_FRAME;
+T_U08 CHAR_ATTACKING;
 
 // temp data for testing
 T_U08 character_tiles[] =
@@ -71,10 +74,46 @@ T_U08 character_tiles[] =
 	0x61,0x61,0x01,0x01,0x01,0x01,0xFF,0xFF
 };
 
-const T_U16 marisa_palette[] =
+T_U08 character_tiles_attack[] =
 {
-	31744, 32767, 6342, 0,
-	31744, 924, 6342, 0
+	0xFF,0xFF,0x80,0xFF,0x80,0xFF,0x80,0xE0,
+	0x80,0xE0,0x83,0xE3,0x8E,0xEE,0x80,0xE0,
+	0x80,0xE0,0x80,0xE0,0x80,0xE0,0x80,0xE0,
+	0x8F,0xEF,0x80,0xFF,0x80,0xFF,0xFF,0xFF,
+	0xFF,0xFF,0x01,0xFF,0x01,0xFF,0x01,0x07,
+	0xC1,0xC7,0xC1,0xC7,0xC1,0xC7,0x81,0x87,
+	0x81,0x87,0x81,0x87,0x81,0x87,0xBD,0xBF,
+	0xE1,0xE7,0x01,0xFF,0x01,0xFF,0xFF,0xFF,
+
+	0xFF,0xFF,0x80,0xFF,0x80,0xFF,0x83,0xE3,
+	0x86,0xE6,0x84,0xE4,0x80,0xE0,0x80,0xE0,
+	0x81,0xE1,0x83,0xE3,0x8E,0xEE,0x98,0xF8,
+	0x9F,0xFF,0x80,0xFF,0x80,0xFF,0xFF,0xFF,
+	0xFF,0xFF,0x01,0xFF,0x01,0xFF,0x81,0x87,
+	0xC1,0xC7,0x41,0x47,0xC1,0xC7,0x81,0x87,
+	0x81,0x87,0x01,0x07,0x01,0x07,0x71,0x77,
+	0xC1,0xC7,0x01,0xFF,0x01,0xFF,0xFF,0xFF,
+
+	0xFF,0xFF,0x80,0xFF,0x80,0xFF,0x87,0xE7,
+	0x84,0xE4,0x80,0xE0,0x80,0xE0,0x81,0xE1,
+	0x80,0xE0,0x80,0xE0,0x88,0xE8,0x8F,0xEF,
+	0x80,0xE0,0x80,0xFF,0x80,0xFF,0xFF,0xFF,
+	0xFF,0xFF,0x01,0xFF,0x01,0xFF,0xE1,0xE7,
+	0x21,0x27,0x61,0x67,0xE1,0xE7,0xB1,0xB7,
+	0x11,0x17,0x11,0x17,0x31,0x37,0xE1,0xE7,
+	0x01,0x07,0x01,0xFF,0x01,0xFF,0xFF,0xFF
+};
+
+T_U08 sword_tiles[] =
+{
+	0x00,0x00,0x03,0x00,0x00,0x00,0x00,0x00,
+	0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x03,
+	0x03,0x04,0x00,0x0F,0x00,0x1F,0x00,0x3E,
+	0x00,0x3C,0x00,0x70,0x00,0xE0,0x00,0xC0,
+	0x01,0x02,0xF3,0x04,0xF3,0x0C,0x06,0x38,
+	0x1E,0x60,0x32,0xCC,0x67,0x98,0xC3,0x30,
+	0x81,0x60,0x00,0xC0,0x00,0x00,0x00,0x00,
+	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
 };
 
 void main(void)
@@ -84,10 +123,13 @@ void main(void)
 	set_bkg_palette(0,5,area_tiles_palette);
 	set_bkg_data(0,5,area_tiles);
 
-	CHAR_X 		= 64;
-	CHAR_Y		= 64;
-	CHAR_LAST_ANIM	= 0;
-	CHAR_FRAME  = 0;
+	CHAR_X 		= 64U;
+	CHAR_Y		= 64U;
+	CHAR_LAST_ANIM	= 0U;
+	CHAR_LAST_ATTACK = 0U;
+	CHAR_MOVING = 0U;
+	CHAR_FRAME  = 0U;
+	CHAR_ATTACKING = 0U;
 
 	f_DisplayMap(map_room, metatiles);
 
@@ -97,7 +139,15 @@ void main(void)
 		f_MoveCharacter();
 
 		// Update du compteur avant changement de frame
-		CHAR_LAST_ANIM++;
+		if(0U != CHAR_MOVING){
+			CHAR_LAST_ANIM++;
+			CHAR_MOVING = 0U;
+		}
+		else
+		{
+			CHAR_LAST_ANIM = 0U;
+		}
+		
 
 		// Attends la vblank avant de repasser la boucle (pour garder 60fps)
 		wait_vbl_done();
@@ -108,7 +158,7 @@ void main(void)
 
 void f_LoadSprites(void)
 {
-	UINT8 k;
+	T_U08 k;
 	SPRITES_8x8;
 
 	for(k=0;k!=8;k++){
@@ -135,6 +185,26 @@ void f_LoadSprites(void)
 	set_data(0x80E0,character_tiles+0xE0U,16);
 	set_data(0x80F0,character_tiles+0xF0U,16);
 
+	set_data(0x8100,character_tiles_attack,16);
+	set_data(0x8110,character_tiles_attack+0x10U,16);
+	set_data(0x8120,character_tiles_attack+0x20U,16);
+	set_data(0x8130,character_tiles_attack+0x30U,16);
+
+	set_data(0x8140,character_tiles_attack+0x40U,16);
+	set_data(0x8150,character_tiles_attack+0x50U,16);
+	set_data(0x8160,character_tiles_attack+0x60U,16);
+	set_data(0x8170,character_tiles_attack+0x70U,16);
+
+	set_data(0x8180,character_tiles_attack+0x80U,16);
+	set_data(0x8190,character_tiles_attack+0x90U,16);
+	set_data(0x81A0,character_tiles_attack+0xA0U,16);
+	set_data(0x81B0,character_tiles_attack+0xB0U,16);
+
+	set_data(0x81C0,sword_tiles,16);
+	set_data(0x81D0,sword_tiles+0x10U,16);
+	set_data(0x81E0,sword_tiles+0x20U,16);
+	set_data(0x81F0,sword_tiles+0x30U,16);
+
 	set_sprite_tile(0,0);				// S0 is the first tile of the sprite VRAM
 	set_sprite_prop(0,0);				// S0 got palette 0
 	move_sprite(0,CHAR_X,CHAR_Y);		// Move sprite to its initial position (given in level initialization)
@@ -148,31 +218,67 @@ void f_LoadSprites(void)
 	set_sprite_prop(3,0);
 	move_sprite(3,CHAR_X+8,CHAR_Y+8);
 
+	set_sprite_tile(4,28);
+	set_sprite_prop(4,0);
+	move_sprite(4,0,0);
+	set_sprite_tile(5,30);
+	set_sprite_prop(5,0);
+	move_sprite(5,0,0);
+	set_sprite_tile(6,29);
+	set_sprite_prop(6,0);
+	move_sprite(6,0,0);
+	set_sprite_tile(7,31);
+	set_sprite_prop(7,0);
+	move_sprite(7,0,0);
+
 	SHOW_SPRITES;
 }
 
 void f_MoveCharacter(void)
 {
+	T_U08 frame_to_update = 0U;
+	T_U08 sword_to_update = 0U;
+
 	// will be joypad_update or similar
 	if(joypad() & J_RIGHT)
 	{
 		CHAR_X++;
+		CHAR_MOVING = 1;
 		if(CHAR_X==137) CHAR_X--;
 	}
 	if(joypad() & J_LEFT)
 	{
 		CHAR_X--;
+		CHAR_MOVING = 1;
 		if(CHAR_X==23) CHAR_X++;
 	}
 	if(joypad() & J_UP)
 	{
 		CHAR_Y--;
+		CHAR_MOVING = 1;
 		if(CHAR_Y==31) CHAR_Y++;
 	}
 	if(joypad() & J_DOWN)
 	{
 		CHAR_Y++;
+		CHAR_MOVING = 1;
 		if(CHAR_Y==113) CHAR_Y--;
+	}
+
+	if(joypad() & J_A)
+	{
+		CHAR_ATTACKING = 1U;
+		CHAR_LAST_ATTACK++;
+	}
+	else
+	{
+		CHAR_ATTACKING = 0U;
+	}
+	
+
+	if(CHAR_MOVING == 0U && CHAR_FRAME != 0U){
+		CHAR_FRAME = 0U;
+		frame_to_update = 1U;
 	}
 
 	// will be update sprites or similar
@@ -181,22 +287,58 @@ void f_MoveCharacter(void)
 		if(4U == CHAR_FRAME){
 			CHAR_FRAME = 0U;
 		}
+		// On remet à 0 le compteur de changement de frame
+		CHAR_LAST_ANIM = 0U;
+		frame_to_update = 1U;
+	}
+
+	if(CHAR_ATTACKING == 1U){
+		CHAR_FRAME = 4U;
+		frame_to_update = 1U;
+		sword_to_update = 1U;
+	}
+	else
+	{
+		if(48U == CHAR_LAST_ATTACK)
+		CHAR_FRAME = 0U;
+		CHAR_LAST_ATTACK = 0U;
+		frame_to_update = 1U;
+	}
+
+	if(frame_to_update == 1U){
 		// On update les sprites et palettes
 		set_sprite_tile(0,0+(CHAR_FRAME<<2));
 		set_sprite_tile(1,2+(CHAR_FRAME<<2));
 		set_sprite_tile(2,1+(CHAR_FRAME<<2));
 		set_sprite_tile(3,3+(CHAR_FRAME<<2));
-
-		// On remet à 0 le compteur de changement de frame
-		CHAR_LAST_ANIM = 0U;
+		frame_to_update = 0U;
 	}
+
+	if(sword_to_update == 1U){
+		move_sprite(4, CHAR_X+17, CHAR_Y);
+		move_sprite(5, CHAR_X+25, CHAR_Y);
+		move_sprite(6, CHAR_X+17, CHAR_Y+8);
+		move_sprite(7, CHAR_X+25, CHAR_Y+8);
+	}
+
+	if(CHAR_LAST_ATTACK != 0U)
+	{
+		CHAR_LAST_ATTACK++;
+	}
+	else
+	{
+		move_sprite(4, 0, 0);
+		move_sprite(5, 0, 0);
+		move_sprite(6, 0, 0);
+		move_sprite(7, 0, 0);
+	}
+	
 	
 	// will be move character or similar
 	move_sprite(0,CHAR_X,CHAR_Y);
 	move_sprite(1,CHAR_X+8,CHAR_Y);
 	move_sprite(2,CHAR_X,CHAR_Y+8);
 	move_sprite(3,CHAR_X+8,CHAR_Y+8);
-	
 }
 
 void game_init(void)

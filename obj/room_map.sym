@@ -1,19 +1,0 @@
-ASxxxx Assembler V01.75 + SDCC mods  (GameBoy Z80-like CPU), page 1.
-
-Symbol Table
-
-    __initrleblock                                                 **** GX
-  1 _map_room                                                      000C GR
-  1 _metatiles                                                     0000 GR
-
-ASxxxx Assembler V01.75 + SDCC mods  (GameBoy Z80-like CPU), page 2.
-
-Area Table
-
-   0 _CODE                                                          size    0   flags 0
-   1 _DATA                                                          size   5C   flags 0
-   2 _OVERLAY                                                       size    0   flags 0
-   3 _HOME                                                          size    0   flags 0
-   4 _GSINIT                                                        size   3F   flags 0
-   5 _GSFINAL                                                       size    0   flags 0
-   6 _CABS                                                          size    0   flags 0
