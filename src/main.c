@@ -196,6 +196,7 @@ void f_MoveCharacter(void)
 	move_sprite(1,CHAR_X+8,CHAR_Y);
 	move_sprite(2,CHAR_X,CHAR_Y+8);
 	move_sprite(3,CHAR_X+8,CHAR_Y+8);
+	
 }
 
 void game_init(void)
