@@ -35,7 +35,7 @@
                              35 	.area _GSINIT
                              36 ;src/room_map.c:28: T_U08 metatiles[] =
    4000 21 A0 C0             37 	ld	hl,#_metatiles
-   4003 CD 3C 05             38 	call	__initrleblock
+   4003 CD 62 09             38 	call	__initrleblock
    4006 0C                   39 	.db	12
    4007 03 03 03 03 01 01    40 	.db	0x03, 0x03, 0x03, 0x03, 0x01, 0x01, 0x02, 0x02
         02 02
@@ -43,7 +43,7 @@
    4013 00                   42 	.db	0
                              43 ;src/room_map.c:35: T_U08 map_room[] =
    4014 21 AC C0             44 	ld	hl,#_map_room
-   4017 CD 3C 05             45 	call	__initrleblock
+   4017 CD 62 09             45 	call	__initrleblock
    401A 01                   46 	.db	1
    401B 00                   47 	.db	0x00
    401C F8 01                48 	.db	#-8,#0x01

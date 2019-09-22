@@ -1,7 +1,7 @@
                               1 ;--------------------------------------------------------
                               2 ; File Created by SDCC : free open source ANSI-C Compiler
                               3 ; Version 2.9.0 #5416 (Apr  7 2010) (MINGW32)
-                              4 ; This file was generated Sun Feb 10 22:27:00 2019
+                              4 ; This file was generated Sun Sep 22 13:16:31 2019
                               5 ;--------------------------------------------------------
                               6 	.module map
                               7 	.optsdcc -mgbz80
@@ -45,15 +45,15 @@
                              45 	
    0000 F5                   46 	push	af
    0001 F5                   47 	push	af
-                             48 ;src/map.c:30: i = 0;
+                             48 ;src/map.c:29: i = 0;
    0002 F8 03                49 	lda	hl,3(sp)
    0004 36 00                50 	ld	(hl),#0x00
-                             51 ;src/map.c:33: pointerOnMap = mapAddress;
+                             51 ;src/map.c:31: pointerOnMap = mapAddress;
    0006 F8 06                52 	lda	hl,6(sp)
    0008 4E                   53 	ld	c,(hl)
    0009 23                   54 	inc	hl
    000A 46                   55 	ld	b,(hl)
-                             56 ;src/map.c:35: while(j != _DungeonMapHeight)
+                             56 ;src/map.c:33: while(j != _DungeonMapHeight)
    000B F8 00                57 	lda	hl,0(sp)
    000D 71                   58 	ld	(hl),c
    000E 23                   59 	inc	hl
@@ -66,7 +66,7 @@
    0016 D6 10                66 	sub	a,#0x10
    0018 CAr6Fs00             67 	jp	Z,00106$
    001B                      68 00112$:
-                             69 ;src/map.c:37: set_bkg_tiles(i, j, 2, 2, (metaTileAddress + *(pointerOnMap)*4));
+                             69 ;src/map.c:35: set_bkg_tiles(i, j, 2, 2, (metaTileAddress + *(pointerOnMap)*4));
    001B F8 00                70 	lda	hl,0(sp)
    001D 5E                   71 	ld	e,(hl)
    001E 23                   72 	inc	hl
@@ -99,18 +99,18 @@
    0042 33                   99 	inc	sp
    0043 CDr00s00            100 	call	_set_bkg_tiles
    0046 E8 06               101 	lda	sp,6(sp)
-                            102 ;src/map.c:39: pointerOnMap++;
+                            102 ;src/map.c:37: pointerOnMap++;
    0048 F8 00               103 	lda	hl,0(sp)
    004A 34                  104 	inc	(hl)
    004B 20 02               105 	jr	NZ,00115$
    004D 23                  106 	inc	hl
    004E 34                  107 	inc	(hl)
    004F                     108 00115$:
-                            109 ;src/map.c:40: i += 2;
+                            109 ;src/map.c:38: i += 2;
    004F F8 03               110 	lda	hl,3(sp)
    0051 34                  111 	inc	(hl)
    0052 34                  112 	inc	(hl)
-                            113 ;src/map.c:41: if(i%_DungeonMapWidth == 0)
+                            113 ;src/map.c:39: if(i%_DungeonMapWidth == 0)
    0053 3E 14               114 	ld	a,#0x14
    0055 F5                  115 	push	af
    0056 33                  116 	inc	sp
@@ -123,10 +123,10 @@
    0060 AF                  123 	xor	a,a
    0061 B1                  124 	or	a,c
    0062 C2r13s00            125 	jp	NZ,00103$
-                            126 ;src/map.c:43: i = 0;
+                            126 ;src/map.c:41: i = 0;
    0065 F8 03               127 	lda	hl,3(sp)
    0067 36 00               128 	ld	(hl),#0x00
-                            129 ;src/map.c:44: j += 2;
+                            129 ;src/map.c:42: j += 2;
    0069 2B                  130 	dec	hl
    006A 34                  131 	inc	(hl)
    006B 34                  132 	inc	(hl)

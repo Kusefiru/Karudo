@@ -1,7 +1,7 @@
                               1 ;--------------------------------------------------------
                               2 ; File Created by SDCC : free open source ANSI-C Compiler
                               3 ; Version 2.9.0 #5416 (Apr  7 2010) (MINGW32)
-                              4 ; This file was generated Sun Feb 10 22:27:00 2019
+                              4 ; This file was generated Sun Sep 22 13:16:31 2019
                               5 ;--------------------------------------------------------
                               6 	.module map
                               7 	.optsdcc -mgbz80
@@ -45,15 +45,15 @@
                              45 	
    03BC F5                   46 	push	af
    03BD F5                   47 	push	af
-                             48 ;src/map.c:30: i = 0;
+                             48 ;src/map.c:29: i = 0;
    03BE F8 03                49 	lda	hl,3(sp)
    03C0 36 00                50 	ld	(hl),#0x00
-                             51 ;src/map.c:33: pointerOnMap = mapAddress;
+                             51 ;src/map.c:31: pointerOnMap = mapAddress;
    03C2 F8 06                52 	lda	hl,6(sp)
    03C4 4E                   53 	ld	c,(hl)
    03C5 23                   54 	inc	hl
    03C6 46                   55 	ld	b,(hl)
-                             56 ;src/map.c:35: while(j != _DungeonMapHeight)
+                             56 ;src/map.c:33: while(j != _DungeonMapHeight)
    03C7 F8 00                57 	lda	hl,0(sp)
    03C9 71                   58 	ld	(hl),c
    03CA 23                   59 	inc	hl
@@ -66,7 +66,7 @@
    03D2 D6 10                66 	sub	a,#0x10
    03D4 CA 2B 04             67 	jp	Z,00106$
    001B                      68 00112$:
-                             69 ;src/map.c:37: set_bkg_tiles(i, j, 2, 2, (metaTileAddress + *(pointerOnMap)*4));
+                             69 ;src/map.c:35: set_bkg_tiles(i, j, 2, 2, (metaTileAddress + *(pointerOnMap)*4));
    03D7 F8 00                70 	lda	hl,0(sp)
    03D9 5E                   71 	ld	e,(hl)
    03DA 23                   72 	inc	hl
@@ -97,36 +97,36 @@
    03FC 7E                   97 	ld	a,(hl)
    03FD F5                   98 	push	af
    03FE 33                   99 	inc	sp
-   03FF CD 12 08            100 	call	_set_bkg_tiles
+   03FF CD 1C 0C            100 	call	_set_bkg_tiles
    0402 E8 06               101 	lda	sp,6(sp)
-                            102 ;src/map.c:39: pointerOnMap++;
+                            102 ;src/map.c:37: pointerOnMap++;
    0404 F8 00               103 	lda	hl,0(sp)
    0406 34                  104 	inc	(hl)
    0407 20 02               105 	jr	NZ,00115$
    0409 23                  106 	inc	hl
    040A 34                  107 	inc	(hl)
    004F                     108 00115$:
-                            109 ;src/map.c:40: i += 2;
+                            109 ;src/map.c:38: i += 2;
    040B F8 03               110 	lda	hl,3(sp)
    040D 34                  111 	inc	(hl)
    040E 34                  112 	inc	(hl)
-                            113 ;src/map.c:41: if(i%_DungeonMapWidth == 0)
+                            113 ;src/map.c:39: if(i%_DungeonMapWidth == 0)
    040F 3E 14               114 	ld	a,#0x14
    0411 F5                  115 	push	af
    0412 33                  116 	inc	sp
    0413 7E                  117 	ld	a,(hl)
    0414 F5                  118 	push	af
    0415 33                  119 	inc	sp
-   0416 CD 6C 06            120 	call	__moduchar_rrx_s
+   0416 CD D7 09            120 	call	__moduchar_rrx_s
    0419 E8 02               121 	lda	sp,2(sp)
    041B 4B                  122 	ld	c,e
    041C AF                  123 	xor	a,a
    041D B1                  124 	or	a,c
    041E C2 CF 03            125 	jp	NZ,00103$
-                            126 ;src/map.c:43: i = 0;
+                            126 ;src/map.c:41: i = 0;
    0421 F8 03               127 	lda	hl,3(sp)
    0423 36 00               128 	ld	(hl),#0x00
-                            129 ;src/map.c:44: j += 2;
+                            129 ;src/map.c:42: j += 2;
    0425 2B                  130 	dec	hl
    0426 34                  131 	inc	(hl)
    0427 34                  132 	inc	(hl)

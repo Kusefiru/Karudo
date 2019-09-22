@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 2.9.0 #5416 (Apr  7 2010) (MINGW32)
-; This file was generated Sun Feb 10 22:27:00 2019
+; This file was generated Sun Sep 22 13:16:31 2019
 ;--------------------------------------------------------
 	.module map
 	.optsdcc -mgbz80
@@ -45,15 +45,15 @@ _f_DisplayMap:
 	
 	push	af
 	push	af
-;src/map.c:30: i = 0;
+;src/map.c:29: i = 0;
 	lda	hl,3(sp)
 	ld	(hl),#0x00
-;src/map.c:33: pointerOnMap = mapAddress;
+;src/map.c:31: pointerOnMap = mapAddress;
 	lda	hl,6(sp)
 	ld	c,(hl)
 	inc	hl
 	ld	b,(hl)
-;src/map.c:35: while(j != _DungeonMapHeight)
+;src/map.c:33: while(j != _DungeonMapHeight)
 	lda	hl,0(sp)
 	ld	(hl),c
 	inc	hl
@@ -66,7 +66,7 @@ _f_DisplayMap:
 	sub	a,#0x10
 	jp	Z,00106$
 00112$:
-;src/map.c:37: set_bkg_tiles(i, j, 2, 2, (metaTileAddress + *(pointerOnMap)*4));
+;src/map.c:35: set_bkg_tiles(i, j, 2, 2, (metaTileAddress + *(pointerOnMap)*4));
 	lda	hl,0(sp)
 	ld	e,(hl)
 	inc	hl
@@ -99,18 +99,18 @@ _f_DisplayMap:
 	inc	sp
 	call	_set_bkg_tiles
 	lda	sp,6(sp)
-;src/map.c:39: pointerOnMap++;
+;src/map.c:37: pointerOnMap++;
 	lda	hl,0(sp)
 	inc	(hl)
 	jr	NZ,00115$
 	inc	hl
 	inc	(hl)
 00115$:
-;src/map.c:40: i += 2;
+;src/map.c:38: i += 2;
 	lda	hl,3(sp)
 	inc	(hl)
 	inc	(hl)
-;src/map.c:41: if(i%_DungeonMapWidth == 0)
+;src/map.c:39: if(i%_DungeonMapWidth == 0)
 	ld	a,#0x14
 	push	af
 	inc	sp
@@ -123,10 +123,10 @@ _f_DisplayMap:
 	xor	a,a
 	or	a,c
 	jp	NZ,00103$
-;src/map.c:43: i = 0;
+;src/map.c:41: i = 0;
 	lda	hl,3(sp)
 	ld	(hl),#0x00
-;src/map.c:44: j += 2;
+;src/map.c:42: j += 2;
 	dec	hl
 	inc	(hl)
 	inc	(hl)

@@ -17,25 +17,25 @@ Area                               Addr   Size   Decimal Bytes (Attributes)
      0000    s__HEADER
      0001    l__GSINITTAIL
      005A    l__BSS
-     0083    l__GSINIT
-     0172    l__BASE
+     015D    l__GSINIT
      01E3    l__HEADER
      0200    s__CODE
-     02B3    l__DATA
-     051E    l__CODE
-     071E    s__BASE
-     0890    s__LIT
+     0211    l__BASE
+     03B7    l__DATA
+     0889    l__CODE
+     0A89    s__BASE
+     0C9A    s__LIT
      4000    s__CODE_1
      4000    s__GSINIT
-     4083    s__GSINITTAIL
-     4084    s__GSFINAL
+     415D    s__GSINITTAIL
+     415E    s__GSFINAL
      C000    .OAM
      C0A0    s__DATA
-     C353    s__BSS
-     C3AD    s__CABS
-     C3AD    s__HEAP
-     C3AD    s__HOME
-     C3AD    s__OVERLAY
+     C457    s__BSS
+     C4B1    s__CABS
+     C4B1    s__HEAP
+     C4B1    s__HOME
+     C4B1    s__OVERLAY
      E000    .STACK
      FF80    .refresh_OAM
 
@@ -43,7 +43,7 @@ Hexadecimal
 
 Area                               Addr   Size   Decimal Bytes (Attributes)
 --------------------------------   ----   ----   ------- ----- ------------
-_CODE                              0200   051E =   1310. bytes (REL,CON)
+_CODE                              0200   0889 =   2185. bytes (REL,CON)
 
       Value  Global
    --------  --------------------------------
@@ -83,43 +83,45 @@ _CODE                              0200   051E =   1310. bytes (REL,CON)
      03AE    banked_ret
      03BC    _f_DisplayMap
      042E    _main
-     0459    _display_map
-     04BC    _game_init
-     04D7    _interrupt_init
-     04F9    _timer_interrupt
-     0514    _area_tiles_palette
-     053C    __initrleblock
-     0563    _set_bkg_palette_entry
-     058B    _set_sprite_palette_entry
-     05B3    _cpu_slow
-     05CE    _cpu_fast
-     05D5    _cgb_compatibility
-     061E    __divschar_rrx_s
-     0625    __divschar_rrx_hds
-     062C    __modschar_rrx_s
-     0633    __modschar_rrx_hds
-     0638    __divsint_rrx_s
-     0644    __divsint_rrx_hds
-     064C    __modsint_rrx_s
-     0658    __modsint_rrx_hds
-     065E    __divuchar_rrx_s
-     065E    __divuschar_rrx_s
-     0665    __divuchar_rrx_hds
-     066C    __moduchar_rrx_s
-     066C    __moduschar_rrx_s
-     0673    __moduchar_rrx_hds
-     0678    __divuint_rrx_s
-     0684    __divuint_rrx_hds
-     068C    __moduint_rrx_s
-     0698    __moduint_rrx_hds
-     069E    .div8
-     069E    .mod8
-     06A6    .div16
-     06A6    .mod16
-     06D8    .divu8
-     06D8    .modu8
-     06DB    .divu16
-     06DB    .modu16
+     047D    _marisa_palette
+     048D    _f_LoadSprites
+     06B7    _f_MoveCharacter
+     0827    _game_init
+     0842    _interrupt_init
+     0864    _timer_interrupt
+     087F    _area_tiles_palette
+     08A7    _set_bkg_palette_entry
+     08CF    _set_sprite_palette_entry
+     08F7    _cpu_slow
+     0912    _cpu_fast
+     0919    _cgb_compatibility
+     0962    __initrleblock
+     0989    __divschar_rrx_s
+     0990    __divschar_rrx_hds
+     0997    __modschar_rrx_s
+     099E    __modschar_rrx_hds
+     09A3    __divsint_rrx_s
+     09AF    __divsint_rrx_hds
+     09B7    __modsint_rrx_s
+     09C3    __modsint_rrx_hds
+     09C9    __divuchar_rrx_s
+     09C9    __divuschar_rrx_s
+     09D0    __divuchar_rrx_hds
+     09D7    __moduchar_rrx_s
+     09D7    __moduschar_rrx_s
+     09DE    __moduchar_rrx_hds
+     09E3    __divuint_rrx_s
+     09EF    __divuint_rrx_hds
+     09F7    __moduint_rrx_s
+     0A03    __moduint_rrx_hds
+     0A09    .div8
+     0A09    .mod8
+     0A11    .div16
+     0A11    .mod16
+     0A43    .divu8
+     0A43    .modu8
+     0A46    .divu16
+     0A46    .modu16
 
 Hexadecimal
 
@@ -135,23 +137,35 @@ Hexadecimal
 
 Area                               Addr   Size   Decimal Bytes (Attributes)
 --------------------------------   ----   ----   ------- ----- ------------
-_BASE                              071E   0172 =    370. bytes (REL,CON)
+_BASE                              0A89   0211 =    529. bytes (REL,CON)
 
       Value  Global
    --------  --------------------------------
-     071E    _set_bkg_palette
-     0749    _set_sprite_palette
-     0774    _set_bkg_data
-     0774    _set_win_data
-     07C1    _set_sprite_data
-     07F0    .copy_vram
-     07FF    _get_data
-     07FF    _set_data
-     0812    _set_bkg_tiles
-     0826    .set_xy_wtt
-     0837    .set_xy_btt
-     0846    .set_xy_tt
-     0877    _set_tiles
+     0A89    _set_bkg_palette
+     0AB4    _set_sprite_palette
+     0ADF    .set_sprite_prop
+     0AEC    _set_sprite_prop
+     0AF7    .mv_sprite
+     0B06    _move_sprite
+     0B13    .copy_vram
+     0B22    _get_data
+     0B22    _set_data
+     0B35    .padup
+     0B35    _waitpadup
+     0B45    .jpad
+     0B72    .wait_pad
+     0B79    _joypad
+     0B7E    _waitpad
+     0B88    .set_sprite_tile
+     0B95    _set_sprite_tile
+     0BA0    _set_bkg_data
+     0BA0    _set_win_data
+     0BED    _set_sprite_data
+     0C1C    _set_bkg_tiles
+     0C30    .set_xy_wtt
+     0C41    .set_xy_btt
+     0C50    .set_xy_tt
+     0C81    _set_tiles
 
 
 
@@ -159,7 +173,7 @@ Hexadecimal
 
 Area                               Addr   Size   Decimal Bytes (Attributes)
 --------------------------------   ----   ----   ------- ----- ------------
-_GSINIT                            4000   0083 =    131. bytes (REL,CON)
+_GSINIT                            4000   015D =    349. bytes (REL,CON)
 
       Value  Global
    --------  --------------------------------
@@ -171,7 +185,7 @@ Hexadecimal
 
 Area                               Addr   Size   Decimal Bytes (Attributes)
 --------------------------------   ----   ----   ------- ----- ------------
-_DATA                              C0A0   02B3 =    691. bytes (REL,CON)
+_DATA                              C0A0   03B7 =    951. bytes (REL,CON)
 
       Value  Global
    --------  --------------------------------
@@ -182,39 +196,44 @@ _DATA                              C0A0   02B3 =    691. bytes (REL,CON)
      C101    _seed
      C103    _is_taken
      C203    _link_map
-     C303    _area_tiles
+     C303    _CHAR_X
+     C304    _CHAR_Y
+     C305    _CHAR_LAST_ANIM
+     C306    _CHAR_FRAME
+     C307    _character_tiles
+     C407    _area_tiles
 
 Hexadecimal
 
 Area                               Addr   Size   Decimal Bytes (Attributes)
 --------------------------------   ----   ----   ------- ----- ------------
-_BSS                               C353   005A =     90. bytes (REL,CON)
+_BSS                               C457   005A =     90. bytes (REL,CON)
 
       Value  Global
    --------  --------------------------------
-     C353    __cpu
-     C354    .mode
-     C355    __io_out
-     C356    __io_in
-     C357    __io_status
-     C358    .vbl_done
-     C35B    .sys_time
-     C35B    _sys_time
-     C35D    .int_0x40
-     C36D    .int_0x48
-     C37D    .int_0x50
-     C38D    .int_0x58
-     C39D    .int_0x60
+     C457    __cpu
+     C458    .mode
+     C459    __io_out
+     C45A    __io_in
+     C45B    __io_status
+     C45C    .vbl_done
+     C45F    .sys_time
+     C45F    _sys_time
+     C461    .int_0x40
+     C471    .int_0x48
+     C481    .int_0x50
+     C491    .int_0x58
+     C4A1    .int_0x60
 
 Hexadecimal
 
 Area                               Addr   Size   Decimal Bytes (Attributes)
 --------------------------------   ----   ----   ------- ----- ------------
-_HEAP                              C3AD   0000 =      0. bytes (REL,CON)
+_HEAP                              C4B1   0000 =      0. bytes (REL,CON)
 
       Value  Global
    --------  --------------------------------
-     C3AD    _malloc_heap_start
+     C4B1    _malloc_heap_start
 
 
 
@@ -230,16 +249,24 @@ MODULES
 	FILE obj/room.o
 		NAME room
 LIBRARIES
-	LIBRARY D:\devlog\SDCC-2.9/device/lib/build/gbz80/gbz80.lib
-		MODULE crt0_rle
 	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
 		MODULE cgb.o
 	LIBRARY D:\devlog\SDCC-2.9/device/lib/build/gbz80/gbz80.lib
+		MODULE crt0_rle
+	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
+		MODULE set_prop.o
+	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
+		MODULE mv_spr.o
+	LIBRARY D:\devlog\SDCC-2.9/device/lib/build/gbz80/gbz80.lib
 		MODULE div
 	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
-		MODULE set_data.o
-	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
 		MODULE cpy_data.o
+	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
+		MODULE pad.o
+	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
+		MODULE set_spr.o
+	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
+		MODULE set_data.o
 	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
 		MODULE set_bk_t.o
 	LIBRARY D:\devlog\GBDK-3.0/lib/gbdk.lib
