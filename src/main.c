@@ -237,7 +237,7 @@ void f_MoveCharacter(void)
     }
 
     if(G_PLAYER_STATE != G_PLAYER_LAST_STATE){
-        G_PLAYER_ANIM_TIMER = 17U;
+        G_PLAYER_ANIM_TIMER = 0U;
         G_PLAYER_FRAME = 0U;
         switch(G_PLAYER_STATE){
             case IS_IDLE:
@@ -249,25 +249,26 @@ void f_MoveCharacter(void)
         }
     }
 
-    G_PLAYER_ANIM_TIMER--;
     if(0U == G_PLAYER_ANIM_TIMER){
         G_PLAYER_FRAME++;
         if(G_PLAYER_FRAME == G_PLAYER_ANIM->NbFrame){
             G_PLAYER_FRAME = 0U;
         }
-        G_PLAYER_ANIM_TIMER = 16U;
+        G_PLAYER_ANIM_TIMER = 17U;
 
         // update des sprites
         i = 0;
         while(i < 4){
-            set_sprite_tile(i, G_PLAYER_ANIM->AddrFrame->TileNb);
+            set_sprite_tile(i, (G_PLAYER_ANIM->AddrFrame + (i*3) + G_PLAYER_FRAME*G_PLAYER_ANIM->NbTiles)->TileNb);
             i++;
         }
     }
 
+    G_PLAYER_ANIM_TIMER--;
+
     i = 0;
     while(i < 4){
-        move_sprite(i, G_PLAYER_X+G_PLAYER_ANIM->AddrFrame->PosX, G_PLAYER_Y+G_PLAYER_ANIM->AddrFrame->PosY);
+        move_sprite(i, G_PLAYER_X+(G_PLAYER_ANIM->AddrFrame + (i*3) + G_PLAYER_FRAME*G_PLAYER_ANIM->NbTiles)->PosX, G_PLAYER_Y+(G_PLAYER_ANIM->AddrFrame + (i*3) + G_PLAYER_FRAME*G_PLAYER_ANIM->NbTiles)->PosY);
         i++;
     }
 }
