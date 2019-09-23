@@ -29,7 +29,11 @@ typedef long          	T_S32;
  */
 typedef unsigned long 	T_U32;
 
-/** Animation structure.
+/** Frame structure.
+ *  This describes a sprite which is part of or a whole frame.
+ *  -- TileNb       : Index of the tile,
+ *  -- PosX         : X Coordinate relative to the whole frame,
+ *  -- PosY         : Y Coordinate relative to the whole frame,
  */
 typedef struct
 {
@@ -38,6 +42,12 @@ typedef struct
     T_U08 PosY;
 } T_ANIM_FRAME;
 
+/** Animation structure.
+ *  This describes a collection of frames for a complete animation.
+ *  -- NbTiles      : Number of tiles to make one whole frame,
+ *  -- NbFrame      : Number of frames in the animation,
+ *  -- *AddrFrame   : Adresse to the frame structure,
+ */
 typedef struct
 {
     T_U08 NbTiles;
@@ -45,6 +55,11 @@ typedef struct
 	T_ANIM_FRAME *AddrFrame;
 } T_ANIM;
 
+/** Player states enum.
+ *  -- IS_IDLE      : For when the player does nothing,
+ *  -- IS_MOVING    : For when the player is simply walking,
+ *  -- IS_ATTACKING : For when the player is attacking,
+ */
 typedef enum
 {
     IS_IDLE      = 0,
