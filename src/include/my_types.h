@@ -29,6 +29,30 @@ typedef long          	T_S32;
  */
 typedef unsigned long 	T_U32;
 
+/** Animation structure.
+ */
+typedef struct
+{
+    T_U08 TileNb;
+    T_U08 PosX;
+    T_U08 PosY;
+} T_ANIM_FRAME;
+
+typedef struct
+{
+    T_U08 NbTiles;
+	T_U08 NbFrame;
+	T_ANIM_FRAME AddrFrame;
+} T_ANIM;
+
+typedef enum
+{
+    IS_IDLE      = 0,
+    IS_MOVING    = 1,
+    IS_ATTACKING = 2
+} T_PLAYER_STATE;
+
+
 /*  ------------------------------------------------------------------
  *  Adresses importantes
  *  ------------------------------------------------------------------*/
