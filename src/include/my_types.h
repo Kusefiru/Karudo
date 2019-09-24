@@ -38,6 +38,7 @@ typedef unsigned long 	T_U32;
 typedef struct
 {
     T_U08 TileNb;
+    T_U08 Property;
     T_U08 PosX;
     T_U08 PosY;
 } T_ANIM_FRAME;
@@ -66,6 +67,14 @@ typedef enum
     IS_MOVING    = 1,
     IS_ATTACKING = 2
 } T_PLAYER_STATE;
+
+typedef enum
+{
+    IS_FACING_DOWN  = 0,
+    IS_FACING_UP    = 1,
+    IS_FACING_LEFT  = 2,
+    IS_FACING_RIGHT = 3
+} T_PLAYER_DIRECTION;
 
 
 /*  ------------------------------------------------------------------
