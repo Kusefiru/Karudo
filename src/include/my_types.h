@@ -52,8 +52,8 @@ typedef struct
 typedef struct
 {
     T_U08 NbTiles;
-	T_U08 NbFrame;
-	T_ANIM_FRAME *AddrFrame;
+    T_U08 NbFrame;
+    T_ANIM_FRAME *AddrFrame;
 } T_ANIM;
 
 /** Player states enum.
