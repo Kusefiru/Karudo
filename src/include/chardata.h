@@ -258,7 +258,7 @@ T_ANIM A_PLAYER_IDLE_LEFT  = {4, 1, 16, G_PlayerIdleFramesLeft};
 T_ANIM A_PLAYER_IDLE_RIGHT = {4, 1, 16, G_PlayerIdleFramesRight};
 T_ANIM A_PLAYER_IDLE_BACK  = {4, 1, 16, G_PlayerIdleFramesBack};
 
-T_ANIM A_PLAYER_WALKING_FRONT = {2, 4, 16, G_PlayerWalkingFramesFront};
+T_ANIM A_PLAYER_WALKING_FRONT = {4, 4, 16, G_PlayerWalkingFramesFront};
 T_ANIM A_PLAYER_WALKING_LEFT  = {4, 2, 16, G_PlayerWalkingFramesLeft};
 T_ANIM A_PLAYER_WALKING_RIGHT = {4, 2, 16, G_PlayerWalkingFramesRight};
 T_ANIM A_PLAYER_WALKING_BACK  = {4, 4, 16, G_PlayerWalkingFramesBack};
