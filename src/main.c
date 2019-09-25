@@ -19,6 +19,7 @@ T_PLAYER_STATE G_PLAYER_STATE;
 T_PLAYER_STATE G_PLAYER_LAST_STATE;
 T_PLAYER_DIRECTION G_PLAYER_DIRECTION;
 T_PLAYER_DIRECTION G_PLAYER_LAST_DIR;
+T_U08 G_PLAYER_TILECOUNT;
 T_U08 G_PLAYER_X;
 T_U08 G_PLAYER_Y;
 T_U08 G_PLAYER_ANIM_TIMER;
@@ -83,12 +84,15 @@ void f_LoadSprites(void)
     set_sprite_palette(0, 1, Player_Palette);
 
     i = 0;
-    while(i < 4){
+    while(i < G_PLAYER_ANIM->NbTiles){
         set_sprite_tile(i, (G_PLAYER_ANIM->AddrFrame + i + G_PLAYER_FRAME*G_PLAYER_ANIM->NbTiles)->TileNb);
         set_sprite_prop(i, (G_PLAYER_ANIM->AddrFrame + i + G_PLAYER_FRAME*G_PLAYER_ANIM->NbTiles)->Property);
         move_sprite(i, G_PLAYER_X+(G_PLAYER_ANIM->AddrFrame + i + G_PLAYER_FRAME*G_PLAYER_ANIM->NbTiles)->PosX, G_PLAYER_Y+(G_PLAYER_ANIM->AddrFrame + i + G_PLAYER_FRAME*G_PLAYER_ANIM->NbTiles)->PosY);
         i++;
     }
+
+    // Set the initial number of tiles for the player
+    G_PLAYER_TILECOUNT = G_PLAYER_ANIM->NbTiles;
 
     SHOW_SPRITES;
 }
@@ -204,18 +208,28 @@ void f_MoveCharacter(void)
         }
 
         // Reset the animation timer
-        G_PLAYER_ANIM_TIMER = 16U;
+        G_PLAYER_ANIM_TIMER = G_PLAYER_ANIM->FrameLength;
 
         // Update the current player sprites
         // To move later on its own function... ?
         i = 0;
-        while(i < 4){
+        while(i < G_PLAYER_ANIM->NbTiles){
             // Set the correct tile of the sprite
             // Address of current animation frame table + i (sprite number) + current frame * number of tiles for one frame
             set_sprite_tile(i, (G_PLAYER_ANIM->AddrFrame + i + G_PLAYER_FRAME*G_PLAYER_ANIM->NbTiles)->TileNb);
             set_sprite_prop(i, (G_PLAYER_ANIM->AddrFrame + i + G_PLAYER_FRAME*G_PLAYER_ANIM->NbTiles)->Property);
             i++;
         }
+
+        // If we set less tiles than on the previous frame
+        while(G_PLAYER_TILECOUNT > i){
+            // We move all the remaining not used tiles to the corner of the screen
+            move_sprite(i, 0, 0);
+            i++;
+        }
+
+        // Update the current number of tiles in the frame
+        G_PLAYER_TILECOUNT = G_PLAYER_ANIM->NbTiles;
     }
 
     // Decrement the animation timer
@@ -224,7 +238,7 @@ void f_MoveCharacter(void)
     // Update the player position
     // To move later on its own function... ?
     i = 0;
-    while(i < 4){
+    while(i < G_PLAYER_ANIM->NbTiles){
         // Move the X and Y coordinates of the sprite
         // Player coordinate + value at : Address of current animation frame table + i (sprite number) + current frame * number of tiles for one frame
         move_sprite(i, G_PLAYER_X+(G_PLAYER_ANIM->AddrFrame + i + G_PLAYER_FRAME*G_PLAYER_ANIM->NbTiles)->PosX, G_PLAYER_Y+(G_PLAYER_ANIM->AddrFrame + i + G_PLAYER_FRAME*G_PLAYER_ANIM->NbTiles)->PosY);
@@ -243,6 +257,7 @@ void game_init(void)
     G_PLAYER_FRAME      = 0;
     G_PLAYER_ANIM       = &A_PLAYER_IDLE_FRONT;
     G_PLAYER_ANIM_TIMER = 0;
+    G_PLAYER_TILECOUNT  = 0;
     G_PLAYER_X 		    = 64U;
     G_PLAYER_Y		    = 64U;
 

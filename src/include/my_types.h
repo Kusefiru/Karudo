@@ -32,6 +32,7 @@ typedef unsigned long 	T_U32;
 /** Frame structure.
  *  This describes a sprite which is part of or a whole frame.
  *  -- TileNb       : Index of the tile,
+ *  -- Property     : Sprite properties for the tile
  *  -- PosX         : X Coordinate relative to the whole frame,
  *  -- PosY         : Y Coordinate relative to the whole frame,
  */
@@ -47,12 +48,14 @@ typedef struct
  *  This describes a collection of frames for a complete animation.
  *  -- NbTiles      : Number of tiles to make one whole frame,
  *  -- NbFrame      : Number of frames in the animation,
+ *  -- FrameLength  : Length of the frame,
  *  -- *AddrFrame   : Adresse to the frame structure,
  */
 typedef struct
 {
     T_U08 NbTiles;
     T_U08 NbFrame;
+    T_U08 FrameLength;
     T_ANIM_FRAME *AddrFrame;
 } T_ANIM;
 

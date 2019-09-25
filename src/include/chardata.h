@@ -122,6 +122,33 @@ const T_U08 Player_Tiles_Walk_Back[] =
     // frame 3 = frame 1 with both bottom inverted
 };
 
+const T_U08 Sword_Tiles[] =
+{
+    // sword handle, diagonal top right -> bottom left
+    0x1E,0x1E,0x2F,0x31,0x1F,0x1D,0x27,0x3D,
+    0x45,0x7F,0x8A,0xFA,0x10,0xF0,0x20,0xE0,
+
+    // sword tip, diagonal top right -> bottom left
+    0x04,0x07,0x08,0x0F,0x11,0x1F,0x12,0x1E,
+    0x0C,0x0C,0x00,0x00,0x00,0x00,0x00,0x00,
+
+    // sweep up, diagonal top right -> bottom left
+    0x10,0x08,0x10,0x08,0x00,0x08,0x08,0x14,
+    0x08,0x14,0x04,0x0A,0x07,0x09,0x02,0x06,
+
+    // sweep down, diagonal top right -> bottom left
+    0x40,0x40,0xC0,0xA0,0x60,0x98,0x18,0x67,
+    0x07,0x18,0x00,0x00,0x00,0x00,0x00,0x00,
+
+    // sword handle, frame 1
+    0x3C,0x24,0x7E,0x42,0xBD,0xDB,0xE7,0xFF,
+    0x24,0x3C,0x24,0x3C,0x24,0x3C,0x24,0x3C,
+
+    // sword tip, frame 1
+    0x24,0x3C,0x24,0x3C,0x24,0x3C,0x24,0x3C,
+    0x24,0x3C,0x24,0x3C,0x24,0x3C,0x18,0x18
+};
+
 const T_ANIM_FRAME G_PlayerIdleFramesFront[] =
 {
     {   0   ,0          ,0  ,0},
@@ -226,14 +253,14 @@ const T_ANIM_FRAME G_PlayerWalkingFramesBack[] =
     {  19   ,S_FLIPX    ,8  ,8},
 };
 
-T_ANIM A_PLAYER_IDLE_FRONT = {4, 1, G_PlayerIdleFramesFront};
-T_ANIM A_PLAYER_IDLE_LEFT  = {4, 1, G_PlayerIdleFramesLeft};
-T_ANIM A_PLAYER_IDLE_RIGHT = {4, 1, G_PlayerIdleFramesRight};
-T_ANIM A_PLAYER_IDLE_BACK  = {4, 1, G_PlayerIdleFramesBack};
+T_ANIM A_PLAYER_IDLE_FRONT = {4, 1, 16, G_PlayerIdleFramesFront};
+T_ANIM A_PLAYER_IDLE_LEFT  = {4, 1, 16, G_PlayerIdleFramesLeft};
+T_ANIM A_PLAYER_IDLE_RIGHT = {4, 1, 16, G_PlayerIdleFramesRight};
+T_ANIM A_PLAYER_IDLE_BACK  = {4, 1, 16, G_PlayerIdleFramesBack};
 
-T_ANIM A_PLAYER_WALKING_FRONT = {4, 4, G_PlayerWalkingFramesFront};
-T_ANIM A_PLAYER_WALKING_LEFT  = {4, 2, G_PlayerWalkingFramesLeft};
-T_ANIM A_PLAYER_WALKING_RIGHT = {4, 2, G_PlayerWalkingFramesRight};
-T_ANIM A_PLAYER_WALKING_BACK  = {4, 4, G_PlayerWalkingFramesBack};
+T_ANIM A_PLAYER_WALKING_FRONT = {2, 4, 16, G_PlayerWalkingFramesFront};
+T_ANIM A_PLAYER_WALKING_LEFT  = {4, 2, 16, G_PlayerWalkingFramesLeft};
+T_ANIM A_PLAYER_WALKING_RIGHT = {4, 2, 16, G_PlayerWalkingFramesRight};
+T_ANIM A_PLAYER_WALKING_BACK  = {4, 4, 16, G_PlayerWalkingFramesBack};
 
 #endif
