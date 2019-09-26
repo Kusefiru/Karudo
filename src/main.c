@@ -13,6 +13,8 @@ void timer_interrupt(void);
 void f_LoadSprites(void);
 void f_MoveCharacter(void);
 
+#define TIME_BEFORE_NEXT_ATTACK 16
+
 T_U32 G_TIMER;
 
 T_PLAYER_STATE G_PLAYER_STATE;
@@ -24,6 +26,8 @@ T_U08 G_PLAYER_X;
 T_U08 G_PLAYER_Y;
 T_U08 G_PLAYER_ANIM_TIMER;
 T_U08 G_PLAYER_FRAME;
+T_U08 G_PLAYER_COMBO;
+T_U08 G_PLAYER_ATK_SINCE;
 T_ANIM *G_PLAYER_ANIM;
 
 void main(void)
@@ -81,7 +85,16 @@ void f_LoadSprites(void)
     set_data(0x8140,Player_Tiles_Walk_Back+0x50U,16);
     set_data(0x8150,Player_Tiles_Walk_Back+0x60U,16);
 
+    set_data(0x8160,Sword_Tiles,16);
+    set_data(0x8170,Sword_Tiles+0x10U,16);
+    set_data(0x8180,Sword_Tiles+0x20U,16);
+    set_data(0x8190,Sword_Tiles+0x30U,16);
+    set_data(0x81A0,Sword_Tiles+0x40U,16);
+    set_data(0x81B0,Sword_Tiles+0x50U,16);
+    set_data(0x81C0,Sword_Tiles+0x60U,16);
+
     set_sprite_palette(0, 1, Player_Palette);
+    set_sprite_palette(1, 1, Sword_Palette);
 
     i = 0;
     while(i < G_PLAYER_ANIM->NbTiles){
@@ -110,6 +123,8 @@ void f_MoveCharacter(void)
     T_U08 i;
 
     // Will be joypad_update or similar
+    // Only has_moved should be updated here, coordinates update should
+    //    be moved once a proper collision detection system is made.
     if(joypad() & J_RIGHT){
         has_moved |= 0x08U;
         G_PLAYER_X++;
@@ -130,28 +145,37 @@ void f_MoveCharacter(void)
         G_PLAYER_Y++;
         if(G_PLAYER_Y==113) G_PLAYER_Y--;
     }
+    if(joypad() & J_A){
+        has_moved |= 0x10U;
+    }
 
     // If the player moved during this cycle, the state is IS_MOVING
     // To move later on its own function... ?
-    if(0U == has_moved){
-        G_PLAYER_STATE = IS_IDLE;
-    }
-    else{
-        if(0U == ((has_moved >> G_PLAYER_DIRECTION)&0x01U)){
-            if(has_moved & 0x01U){
-                G_PLAYER_DIRECTION = 0U;
+    if(IS_ATTACKING != G_PLAYER_STATE){
+        if(0U == has_moved){
+            G_PLAYER_STATE = IS_IDLE;
+        }
+        else{
+            if(0U == ((has_moved >> G_PLAYER_DIRECTION)&0x01U)){
+                if(has_moved & 0x01U){
+                    G_PLAYER_DIRECTION = 0U;
+                }
+                else if(has_moved & 0x02U){
+                    G_PLAYER_DIRECTION = 1U;
+                }
+                else if(has_moved & 0x04U){
+                    G_PLAYER_DIRECTION = 2U;
+                }
+                else if(has_moved & 0x08U){
+                    G_PLAYER_DIRECTION = 3U;
+                }
             }
-            else if(has_moved & 0x02U){
-                G_PLAYER_DIRECTION = 1U;
-            }
-            else if(has_moved & 0x04U){
-                G_PLAYER_DIRECTION = 2U;
-            }
-            else{
-                G_PLAYER_DIRECTION = 3U;
+            G_PLAYER_STATE = IS_MOVING;
+
+            if(has_moved & 0x10U){
+                G_PLAYER_STATE = IS_ATTACKING;
             }
         }
-        G_PLAYER_STATE = IS_MOVING;
     }
 
     // If the current state has changed
@@ -160,34 +184,14 @@ void f_MoveCharacter(void)
         // Point to the new animation cycle
         switch(G_PLAYER_STATE){
             case IS_IDLE:
-                switch(G_PLAYER_DIRECTION){
-                    case IS_FACING_DOWN:
-                        G_PLAYER_ANIM = &A_PLAYER_IDLE_FRONT;
-                        break;
-                    case IS_FACING_UP:
-                        G_PLAYER_ANIM = &A_PLAYER_IDLE_BACK;
-                        break;
-                    case IS_FACING_LEFT:
-                        G_PLAYER_ANIM = &A_PLAYER_IDLE_LEFT;
-                        break;
-                    case IS_FACING_RIGHT:
-                        G_PLAYER_ANIM = &A_PLAYER_IDLE_RIGHT;
-                }
+                G_PLAYER_ANIM = &A_PLAYER_IDLE_FRONT + G_PLAYER_DIRECTION;
                 break;
             case IS_MOVING:
-                switch(G_PLAYER_DIRECTION){
-                    case IS_FACING_DOWN:
-                        G_PLAYER_ANIM = &A_PLAYER_WALKING_FRONT;
-                        break;
-                    case IS_FACING_UP:
-                        G_PLAYER_ANIM = &A_PLAYER_WALKING_BACK;
-                        break;
-                    case IS_FACING_LEFT:
-                        G_PLAYER_ANIM = &A_PLAYER_WALKING_LEFT;
-                        break;
-                    case IS_FACING_RIGHT:
-                        G_PLAYER_ANIM = &A_PLAYER_WALKING_RIGHT;
-                }
+                G_PLAYER_ANIM = &A_PLAYER_WALKING_FRONT + G_PLAYER_DIRECTION;
+                break;
+            case IS_ATTACKING:
+                G_PLAYER_ANIM = &A_PLAYER_SWORD_1_FRONT;
+                G_PLAYER_ATK_SINCE = 0U;
                 break;
         }
 
@@ -205,6 +209,13 @@ void f_MoveCharacter(void)
         // Or if it reached the end of the cycle, reset it
         if(G_PLAYER_FRAME == G_PLAYER_ANIM->NbFrame){
             G_PLAYER_FRAME = 0U;
+
+            // if the player was attacking, we reset its state to idle
+            if((IS_ATTACKING == G_PLAYER_STATE) &&
+               (0 != G_PLAYER_ATK_SINCE)){
+                G_PLAYER_STATE = IS_IDLE;
+                G_PLAYER_ANIM = &A_PLAYER_IDLE_FRONT + G_PLAYER_DIRECTION;
+            }
         }
 
         // Reset the animation timer
@@ -234,6 +245,7 @@ void f_MoveCharacter(void)
 
     // Decrement the animation timer
     G_PLAYER_ANIM_TIMER--;
+    G_PLAYER_ATK_SINCE++;
 
     // Update the player position
     // To move later on its own function... ?
@@ -255,6 +267,8 @@ void game_init(void)
     G_PLAYER_DIRECTION  = 0;
     G_PLAYER_LAST_DIR   = 0;
     G_PLAYER_FRAME      = 0;
+    G_PLAYER_COMBO      = 0;
+    G_PLAYER_ATK_SINCE  = 0;
     G_PLAYER_ANIM       = &A_PLAYER_IDLE_FRONT;
     G_PLAYER_ANIM_TIMER = 0;
     G_PLAYER_TILECOUNT  = 0;

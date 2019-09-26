@@ -13,6 +13,11 @@ const T_U16 Player_Palette[] =
     32767, 21375, 8541, 1057
 };
 
+const T_U16 Sword_Palette[] =
+{
+    32767, 736, 25535, 0
+};
+
 const T_U08 Player_Tiles_Walk_Front[] =
 {
     // top-left, frame 0
@@ -146,7 +151,11 @@ const T_U08 Sword_Tiles[] =
 
     // sword tip, frame 1
     0x24,0x3C,0x24,0x3C,0x24,0x3C,0x24,0x3C,
-    0x24,0x3C,0x24,0x3C,0x24,0x3C,0x18,0x18
+    0x24,0x3C,0x24,0x3C,0x24,0x3C,0x18,0x18,
+
+    // empty tile needed for frame 1
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
 };
 
 const T_ANIM_FRAME G_PlayerIdleFramesFront[] =
@@ -253,14 +262,46 @@ const T_ANIM_FRAME G_PlayerWalkingFramesBack[] =
     {  19   ,S_FLIPX    ,8  ,8},
 };
 
+const T_ANIM_FRAME G_PlayerAttackingFramesFront[] =
+{
+    {  22   ,S_FLIPX|0x01U  ,12 ,12},
+    {  24   ,S_FLIPX|0x01U  ,20 ,12},
+    {  25   ,S_FLIPX|0x01U  ,12 ,20},
+    {  23   ,S_FLIPX|0x01U  ,20 ,20},
+    {   0   ,0          ,0  ,0},
+    {   1   ,0          ,0  ,8},
+    {   2   ,0          ,8  ,0},
+    {   1   ,S_FLIPX    ,8  ,8},
+
+    {  26   ,0x01U      ,8  ,12},
+    {  27   ,0x01U      ,8  ,20},
+    {  28   ,0x01U      ,0  ,0 },
+    {  28   ,0x01U      ,0  ,0 },
+    {   0   ,0          ,0  ,0},
+    {   1   ,0          ,0  ,8},
+    {   2   ,0          ,8  ,0},
+    {   1   ,S_FLIPX    ,8  ,8},
+    
+    {  24   ,0x01U      ,-4 ,12},
+    {  23   ,0x01U      ,-4 ,20},
+    {  22   ,0x01U      ,4  ,12},
+    {  25   ,0x01U      ,4  ,20},
+    {   0   ,0          ,0  ,0},
+    {   1   ,0          ,0  ,8},
+    {   2   ,0          ,8  ,0},
+    {   1   ,S_FLIPX    ,8  ,8}
+};
+
 T_ANIM A_PLAYER_IDLE_FRONT = {4, 1, 16, G_PlayerIdleFramesFront};
+T_ANIM A_PLAYER_IDLE_BACK  = {4, 1, 16, G_PlayerIdleFramesBack};
 T_ANIM A_PLAYER_IDLE_LEFT  = {4, 1, 16, G_PlayerIdleFramesLeft};
 T_ANIM A_PLAYER_IDLE_RIGHT = {4, 1, 16, G_PlayerIdleFramesRight};
-T_ANIM A_PLAYER_IDLE_BACK  = {4, 1, 16, G_PlayerIdleFramesBack};
 
 T_ANIM A_PLAYER_WALKING_FRONT = {4, 4, 16, G_PlayerWalkingFramesFront};
+T_ANIM A_PLAYER_WALKING_BACK  = {4, 4, 16, G_PlayerWalkingFramesBack};
 T_ANIM A_PLAYER_WALKING_LEFT  = {4, 2, 16, G_PlayerWalkingFramesLeft};
 T_ANIM A_PLAYER_WALKING_RIGHT = {4, 2, 16, G_PlayerWalkingFramesRight};
-T_ANIM A_PLAYER_WALKING_BACK  = {4, 4, 16, G_PlayerWalkingFramesBack};
+
+T_ANIM A_PLAYER_SWORD_1_FRONT = {8, 3, 8, G_PlayerAttackingFramesFront};
 
 #endif

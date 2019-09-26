@@ -59,6 +59,20 @@ typedef struct
     T_ANIM_FRAME *AddrFrame;
 } T_ANIM;
 
+/** Attack structure.
+ *  This describes the details of an attack done by the player
+ */
+typedef struct
+{
+    T_ANIM *Anim;
+    T_U08 HitboxX;
+    T_U08 HitboxY;
+    T_U08 HitboxWidth;
+    T_U08 HitboxLenght;
+    T_U08 Damages;
+} T_Attack;
+
+
 /** Player states enum.
  *  -- IS_IDLE      : For when the player does nothing,
  *  -- IS_MOVING    : For when the player is simply walking,
@@ -71,6 +85,8 @@ typedef enum
     IS_ATTACKING = 2
 } T_PLAYER_STATE;
 
+/** Player direction enum.
+ */
 typedef enum
 {
     IS_FACING_DOWN  = 0,
