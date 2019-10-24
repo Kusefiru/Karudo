@@ -68,9 +68,39 @@ typedef struct
     T_U08 HitboxX;
     T_U08 HitboxY;
     T_U08 HitboxWidth;
-    T_U08 HitboxLenght;
+    T_U08 HitboxLength;
     T_U08 Damages;
 } T_Attack;
+
+/** Attack structure.
+ *  This describes the details of an attack done by the player
+ */
+typedef struct
+{
+    T_ANIM *Anim;
+    T_U08  Direction;
+} T_Combo;
+
+/** State structure.
+ *  This describes a collection of frames for a complete animation.
+ *  -- *Anim            : Address of the front animation for this state,
+ *  -- *NextState_Down  : Next state if A & Down are pressed,
+ *  -- *NextState_Up    : Next state if A & Up are pressed,
+ *  -- *NextState_Left  : Next state if A & Left are pressed,
+ *  -- *NextState_Right : Next state if A & Right are pressed,
+ *  -- *NextState_Idle  : Next state if only A is pressed
+ */
+typedef struct T_STATE
+{
+    T_ANIM *Anim;
+    struct T_STATE *NextState_Down;
+    struct T_STATE *NextState_Up;
+    struct T_STATE *NextState_Left;
+    struct T_STATE *NextState_Right;
+    struct T_STATE *NextState_Idle;
+} T_STATE;
+
+// 0 -> Retour en state IDLE
 
 
 /** Player states enum.
@@ -95,6 +125,10 @@ typedef enum
     IS_FACING_RIGHT = 3
 } T_PLAYER_DIRECTION;
 
+/*  ------------------------------------------------------------------
+ *  Valeurs importantes
+ *  ------------------------------------------------------------------*/
+#define D_TIME_BEFORE_NEXT  6
 
 /*  ------------------------------------------------------------------
  *  Adresses importantes

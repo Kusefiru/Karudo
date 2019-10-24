@@ -17,21 +17,26 @@ void f_MoveCharacter(void);
 
 T_U32 G_TIMER;
 
-T_PLAYER_STATE G_PLAYER_STATE;
-T_PLAYER_STATE G_PLAYER_LAST_STATE;
 T_PLAYER_DIRECTION G_PLAYER_DIRECTION;
 T_PLAYER_DIRECTION G_PLAYER_LAST_DIR;
+T_STATE *G_PLAYER_STATE_;
+T_STATE *G_PLAYER_LAST_STATE_;
 T_U08 G_PLAYER_TILECOUNT;
 T_U08 G_PLAYER_X;
 T_U08 G_PLAYER_Y;
+T_ANIM *G_PLAYER_ANIM;
 T_U08 G_PLAYER_ANIM_TIMER;
 T_U08 G_PLAYER_FRAME;
+T_U08 G_PLAYER_FRAME_ATK;
 T_U08 G_PLAYER_COMBO;
-T_U08 G_PLAYER_ATK_SINCE;
-T_ANIM *G_PLAYER_ANIM;
+T_U08 REMEMBER_INCREMENT_COMBO;
+
+T_U08 G_CURRENTFRAMEVAL;
 
 void main(void)
 {
+    G_CURRENTFRAMEVAL = 0U;
+    
     game_init();
 
     set_bkg_palette(0,5,area_tiles_palette);
@@ -41,9 +46,18 @@ void main(void)
 
     f_LoadSprites();
 
+    set_sprite_tile(30, 0);
+    set_sprite_prop(30, 0);
+
     while(1){
+        G_CURRENTFRAMEVAL++;
+        if(60 == G_CURRENTFRAMEVAL){
+            G_CURRENTFRAMEVAL = 0U;
+        }
+        move_sprite(30,G_CURRENTFRAMEVAL, 144);
+
         // On mémorise l'état précédent (peut être utile pour les sorties d'état)
-        G_PLAYER_LAST_STATE = G_PLAYER_STATE;
+        G_PLAYER_LAST_STATE_ = G_PLAYER_STATE_;
         G_PLAYER_LAST_DIR   = G_PLAYER_DIRECTION;
 
         // On check le joypad
@@ -118,13 +132,14 @@ void f_MoveCharacter(void)
     // bit 2 : left
     // bit 3 : right
     T_U08 has_moved = 0x00U;
-
     T_U08 update_sprite = 0U;
     T_U08 i;
 
+    // ==========================================================================
     // Will be joypad_update or similar
     // Only has_moved should be updated here, coordinates update should
     //    be moved once a proper collision detection system is made.
+    // By the way, we should simply copy joypad to a global var
     if(joypad() & J_RIGHT){
         has_moved |= 0x08U;
         G_PLAYER_X++;
@@ -149,59 +164,114 @@ void f_MoveCharacter(void)
         has_moved |= 0x10U;
     }
 
+    // ==========================================================================
+    // Here we handle if the player state needs to change
     // If the player moved during this cycle, the state is IS_MOVING
     // To move later on its own function... ?
-    if(IS_ATTACKING != G_PLAYER_STATE){
-        if(0U == has_moved){
-            G_PLAYER_STATE = IS_IDLE;
-        }
-        else{
-            if(0U == ((has_moved >> G_PLAYER_DIRECTION)&0x01U)){
-                if(has_moved & 0x01U){
-                    G_PLAYER_DIRECTION = 0U;
-                }
-                else if(has_moved & 0x02U){
-                    G_PLAYER_DIRECTION = 1U;
-                }
-                else if(has_moved & 0x04U){
-                    G_PLAYER_DIRECTION = 2U;
-                }
-                else if(has_moved & 0x08U){
-                    G_PLAYER_DIRECTION = 3U;
-                }
-            }
-            G_PLAYER_STATE = IS_MOVING;
 
-            if(has_moved & 0x10U){
-                G_PLAYER_STATE = IS_ATTACKING;
+    // If the player pressed A
+    if(0x10U & has_moved){
+        // If the current frame allows to move to the next attack
+        if(G_PLAYER_FRAME_ATK < D_TIME_BEFORE_NEXT){
+            // If it is A & Down
+            if(has_moved & 0x01U){
+                G_PLAYER_STATE_ = G_PLAYER_STATE_->NextState_Down;
+            }
+            // If it is A & Up
+            else if(has_moved & 0x02U){
+                G_PLAYER_STATE_ = G_PLAYER_STATE_->NextState_Up;
+            }
+            // If it is A & Left
+            else if(has_moved & 0x04U){
+                G_PLAYER_STATE_ = G_PLAYER_STATE_->NextState_Left;
+            }
+            // If it is A & Right
+            else if(has_moved & 0x08U){
+                G_PLAYER_STATE_ = G_PLAYER_STATE_->NextState_Right;
+            }
+            // If it is only A
+            else{
+                G_PLAYER_STATE_ = G_PLAYER_STATE_->NextState_Idle;
+            }
+        }
+    }
+    // Else if A was not pressed
+    else{
+        // If the player is not attacking
+        if (0U == G_PLAYER_FRAME_ATK){
+            G_PLAYER_STATE_ = &STATE_IDLE;
+            // If movement has been inputted
+            if(has_moved & 0x0FU){
+                G_PLAYER_STATE_ = &STATE_MOVE;
+                // Now check the direction
+                // If the current direction is no longer pressed
+                if(0U == ((has_moved >> G_PLAYER_DIRECTION)&0x01U)){
+                    // If the player is moving Down
+                    if(has_moved & 0x01U){
+                        G_PLAYER_DIRECTION = 0U;
+                    }
+                    // If the player is moving Up
+                    else if(has_moved & 0x02U){
+                        G_PLAYER_DIRECTION = 1U;
+                    }
+                    // If the player is moving Left
+                    else if(has_moved & 0x04U){
+                        G_PLAYER_DIRECTION = 2U;
+                    }
+                    // If the player is moving Right
+                    else if(has_moved & 0x08U){
+                        G_PLAYER_DIRECTION = 3U;
+                    }
+                }
             }
         }
     }
 
-    // If the current state has changed
-    if(	(G_PLAYER_STATE != G_PLAYER_LAST_STATE) ||
-        (G_PLAYER_DIRECTION != G_PLAYER_LAST_DIR)){
-        // Point to the new animation cycle
-        switch(G_PLAYER_STATE){
-            case IS_IDLE:
-                G_PLAYER_ANIM = &A_PLAYER_IDLE_FRONT + G_PLAYER_DIRECTION;
-                break;
-            case IS_MOVING:
-                G_PLAYER_ANIM = &A_PLAYER_WALKING_FRONT + G_PLAYER_DIRECTION;
-                break;
-            case IS_ATTACKING:
-                G_PLAYER_ANIM = &A_PLAYER_SWORD_1_FRONT;
-                G_PLAYER_ATK_SINCE = 0U;
-                break;
+    // If the player state is null (no next move), go back to idle mode
+    // This will induce one frame where the player is idling even if they move during it but well...
+    // One solution would be to jump into the previous if...
+    if(0U == G_PLAYER_STATE_){
+        G_PLAYER_STATE_ = &STATE_IDLE;
+    }
+
+    // ==========================================================================
+    // If the player state has changed
+    if(G_PLAYER_LAST_STATE_ != G_PLAYER_STATE_){
+        // If the player is idle
+        if(&STATE_IDLE == G_PLAYER_STATE_){
+            G_PLAYER_ANIM = G_PLAYER_STATE_->Anim + G_PLAYER_DIRECTION;
+        }
+        // Else if the player is moving
+        else if(&STATE_MOVE == G_PLAYER_STATE_){
+            G_PLAYER_ANIM = G_PLAYER_STATE_->Anim + G_PLAYER_DIRECTION;
+        }
+        // Else if the player is attacking
+        else{
+            G_PLAYER_ANIM = G_PLAYER_STATE_->Anim; // + G_PLAYER_DIRECTION;
+            // Calculate the length of the move
+            G_PLAYER_FRAME_ATK = G_PLAYER_ANIM->NbFrame * G_PLAYER_ANIM->FrameLength;
         }
 
-        // Reset the animation timer and current frame
-        // We actually force the animation timer to 0 and the frame
-        // to the last one of the animation to reset it just after
+        G_PLAYER_ANIM_TIMER = 0U;
+        G_PLAYER_FRAME = G_PLAYER_ANIM->NbFrame-1U;
+    }
+    // Else if the player direction has changed (only applies when moving or idle)
+    // We put an "else if" here because if the player state change, direction will be updated as well
+    else if(G_PLAYER_LAST_DIR != G_PLAYER_DIRECTION){
+        // If the player is idle
+        if(&STATE_IDLE == G_PLAYER_STATE_){
+            G_PLAYER_ANIM = G_PLAYER_STATE_->Anim + G_PLAYER_DIRECTION;
+        }
+        // Else if the player is moving
+        else if(&STATE_MOVE == G_PLAYER_STATE_){
+            G_PLAYER_ANIM = G_PLAYER_STATE_->Anim + G_PLAYER_DIRECTION;
+        }
+
         G_PLAYER_ANIM_TIMER = 0U;
         G_PLAYER_FRAME = G_PLAYER_ANIM->NbFrame-1U;
     }
 
+    // ==========================================================================
     // If the animation timer is 0
     if(0U == G_PLAYER_ANIM_TIMER){
         // Increment the current frame
@@ -209,13 +279,6 @@ void f_MoveCharacter(void)
         // Or if it reached the end of the cycle, reset it
         if(G_PLAYER_FRAME == G_PLAYER_ANIM->NbFrame){
             G_PLAYER_FRAME = 0U;
-
-            // if the player was attacking, we reset its state to idle
-            if((IS_ATTACKING == G_PLAYER_STATE) &&
-               (0 != G_PLAYER_ATK_SINCE)){
-                G_PLAYER_STATE = IS_IDLE;
-                G_PLAYER_ANIM = &A_PLAYER_IDLE_FRONT + G_PLAYER_DIRECTION;
-            }
         }
 
         // Reset the animation timer
@@ -243,10 +306,16 @@ void f_MoveCharacter(void)
         G_PLAYER_TILECOUNT = G_PLAYER_ANIM->NbTiles;
     }
 
-    // Decrement the animation timer
+    // ==========================================================================
+    // Then we update our global values...
     G_PLAYER_ANIM_TIMER--;
-    G_PLAYER_ATK_SINCE++;
 
+    // Update the G_PLAYER_FRAME_ATK var only if it is different from 0
+    if(0U != G_PLAYER_FRAME_ATK){
+        G_PLAYER_FRAME_ATK--;
+    }
+
+    // ==========================================================================
     // Update the player position
     // To move later on its own function... ?
     i = 0;
@@ -262,18 +331,20 @@ void f_MoveCharacter(void)
 void game_init(void)
 {
     G_TIMER             = 0;
-    G_PLAYER_STATE      = 0;
-    G_PLAYER_LAST_STATE = 0;
     G_PLAYER_DIRECTION  = 0;
     G_PLAYER_LAST_DIR   = 0;
     G_PLAYER_FRAME      = 0;
     G_PLAYER_COMBO      = 0;
-    G_PLAYER_ATK_SINCE  = 0;
+    G_PLAYER_FRAME_ATK  = 0;
     G_PLAYER_ANIM       = &A_PLAYER_IDLE_FRONT;
     G_PLAYER_ANIM_TIMER = 0;
     G_PLAYER_TILECOUNT  = 0;
     G_PLAYER_X 		    = 64U;
     G_PLAYER_Y		    = 64U;
+    G_PLAYER_STATE_     = &STATE_IDLE;
+    G_PLAYER_LAST_STATE_= &STATE_IDLE;
+
+    REMEMBER_INCREMENT_COMBO = 0;
 
     TAC_REG = 0x07U;
 
