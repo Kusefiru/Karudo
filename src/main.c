@@ -11,7 +11,9 @@ void interrupt_init(void);
 void timer_interrupt(void);
 
 void f_LoadSprites(void);
-void f_MoveCharacter(void);
+void f_GetJoypad(void);
+void f_GetPlayerState(void);
+void f_MovePlayerSprites(void);
 
 #define TIME_BEFORE_NEXT_ATTACK 16
 
@@ -28,8 +30,9 @@ T_ANIM *G_PLAYER_ANIM;
 T_U08 G_PLAYER_ANIM_TIMER;
 T_U08 G_PLAYER_FRAME;
 T_U08 G_PLAYER_FRAME_ATK;
-T_U08 G_PLAYER_COMBO;
-T_U08 REMEMBER_INCREMENT_COMBO;
+
+T_U08 G_JOYPAD;
+T_U08 G_LAST_JOYPAD;
 
 T_U08 G_CURRENTFRAMEVAL;
 
@@ -58,10 +61,17 @@ void main(void)
 
         // On mémorise l'état précédent (peut être utile pour les sorties d'état)
         G_PLAYER_LAST_STATE_ = G_PLAYER_STATE_;
-        G_PLAYER_LAST_DIR   = G_PLAYER_DIRECTION;
+        G_PLAYER_LAST_DIR    = G_PLAYER_DIRECTION;
+        G_LAST_JOYPAD        = G_JOYPAD;
 
         // On check le joypad
-        f_MoveCharacter();
+        f_GetJoypad();
+
+        // On met à jour l'état du joueur
+        f_GetPlayerState();
+
+        // On update les sprites du joueur
+        f_MovePlayerSprites();
         
         // Attends la vblank avant de repasser la boucle (pour garder 60fps)
         wait_vbl_done();
@@ -124,16 +134,9 @@ void f_LoadSprites(void)
     SHOW_SPRITES;
 }
 
-void f_MoveCharacter(void)
+void f_GetJoypad(void)
 {
-    // bit field to memorize which direction the player moved
-    // bit 0 : down
-    // bit 1 : up
-    // bit 2 : left
-    // bit 3 : right
-    T_U08 has_moved = 0x00U;
-    T_U08 update_sprite = 0U;
-    T_U08 i;
+    G_JOYPAD = joypad();
 
     // ==========================================================================
     // Will be joypad_update or similar
@@ -141,53 +144,49 @@ void f_MoveCharacter(void)
     //    be moved once a proper collision detection system is made.
     // By the way, we should simply copy joypad to a global var
     if(joypad() & J_RIGHT){
-        has_moved |= 0x08U;
         G_PLAYER_X++;
         if(G_PLAYER_X==137) G_PLAYER_X--;
     }
     if(joypad() & J_LEFT){
-        has_moved |= 0x04U;
         G_PLAYER_X--;
         if(G_PLAYER_X==23) G_PLAYER_X++;
     }
     if(joypad() & J_UP){
-        has_moved |= 0x02U;
         G_PLAYER_Y--;
         if(G_PLAYER_Y==31) G_PLAYER_Y++;
     }
     if(joypad() & J_DOWN){
-        has_moved |= 0x01U;
         G_PLAYER_Y++;
         if(G_PLAYER_Y==113) G_PLAYER_Y--;
     }
-    if(joypad() & J_A){
-        has_moved |= 0x10U;
-    }
+}
 
+void f_GetPlayerState(void)
+{
     // ==========================================================================
     // Here we handle if the player state needs to change
     // If the player moved during this cycle, the state is IS_MOVING
     // To move later on its own function... ?
 
-    // If the player pressed A
-    if(0x10U & has_moved){
+    // If the player pressed A and A was not pressed
+    if((J_A & G_JOYPAD) && !(J_A & G_LAST_JOYPAD)){
         // If the current frame allows to move to the next attack
-        if(G_PLAYER_FRAME_ATK < D_TIME_BEFORE_NEXT){
-            // If it is A & Down
-            if(has_moved & 0x01U){
-                G_PLAYER_STATE_ = G_PLAYER_STATE_->NextState_Down;
-            }
-            // If it is A & Up
-            else if(has_moved & 0x02U){
-                G_PLAYER_STATE_ = G_PLAYER_STATE_->NextState_Up;
+        if(G_PLAYER_FRAME_ATK < D_TIME_BEFORE_END){
+            // If it is A & Right
+            if(G_JOYPAD & J_RIGHT){
+                G_PLAYER_STATE_ = G_PLAYER_STATE_->NextState_Right;
             }
             // If it is A & Left
-            else if(has_moved & 0x04U){
+            else if(G_JOYPAD & J_LEFT){
                 G_PLAYER_STATE_ = G_PLAYER_STATE_->NextState_Left;
             }
-            // If it is A & Right
-            else if(has_moved & 0x08U){
-                G_PLAYER_STATE_ = G_PLAYER_STATE_->NextState_Right;
+            // If it is A & Up
+            else if(G_JOYPAD & J_UP){
+                G_PLAYER_STATE_ = G_PLAYER_STATE_->NextState_Up;
+            }
+            // If it is A & Down
+            else if(G_JOYPAD & J_DOWN){
+                G_PLAYER_STATE_ = G_PLAYER_STATE_->NextState_Down;
             }
             // If it is only A
             else{
@@ -201,25 +200,25 @@ void f_MoveCharacter(void)
         if (0U == G_PLAYER_FRAME_ATK){
             G_PLAYER_STATE_ = &STATE_IDLE;
             // If movement has been inputted
-            if(has_moved & 0x0FU){
+            if(G_JOYPAD & 0x0FU){
                 G_PLAYER_STATE_ = &STATE_MOVE;
                 // Now check the direction
                 // If the current direction is no longer pressed
-                if(0U == ((has_moved >> G_PLAYER_DIRECTION)&0x01U)){
-                    // If the player is moving Down
-                    if(has_moved & 0x01U){
+                if(0U == ((G_JOYPAD >> G_PLAYER_DIRECTION)&0x01U)){
+                    // If the player is moving Right
+                    if(G_JOYPAD & J_RIGHT){
                         G_PLAYER_DIRECTION = 0U;
                     }
-                    // If the player is moving Up
-                    else if(has_moved & 0x02U){
+                    // If the player is moving Left
+                    else if(G_JOYPAD & J_LEFT){
                         G_PLAYER_DIRECTION = 1U;
                     }
-                    // If the player is moving Left
-                    else if(has_moved & 0x04U){
+                    // If the player is moving Up
+                    else if(G_JOYPAD & J_UP){
                         G_PLAYER_DIRECTION = 2U;
                     }
-                    // If the player is moving Right
-                    else if(has_moved & 0x08U){
+                    // If the player is moving Down
+                    else if(G_JOYPAD & J_DOWN){
                         G_PLAYER_DIRECTION = 3U;
                     }
                 }
@@ -240,6 +239,11 @@ void f_MoveCharacter(void)
         // If the player is idle
         if(&STATE_IDLE == G_PLAYER_STATE_){
             G_PLAYER_ANIM = G_PLAYER_STATE_->Anim + G_PLAYER_DIRECTION;
+            // If the previous state was an attack
+            // (we check only if it wasn't STATE_MOVE since if we are here, the previous state wasn't STATE_IDLE)
+            if(G_PLAYER_LAST_STATE_ != &STATE_MOVE){
+                G_PLAYER_FRAME_ATK = D_TIME_BEFORE_END + D_TIME_BEFORE_END;
+            }
         }
         // Else if the player is moving
         else if(&STATE_MOVE == G_PLAYER_STATE_){
@@ -270,6 +274,10 @@ void f_MoveCharacter(void)
         G_PLAYER_ANIM_TIMER = 0U;
         G_PLAYER_FRAME = G_PLAYER_ANIM->NbFrame-1U;
     }
+}
+
+void f_MovePlayerSprites(void){
+    T_U08 i;
 
     // ==========================================================================
     // If the animation timer is 0
@@ -331,10 +339,9 @@ void f_MoveCharacter(void)
 void game_init(void)
 {
     G_TIMER             = 0;
-    G_PLAYER_DIRECTION  = 0;
-    G_PLAYER_LAST_DIR   = 0;
+    G_PLAYER_DIRECTION  = IS_FACING_DOWN;
+    G_PLAYER_LAST_DIR   = IS_FACING_DOWN;
     G_PLAYER_FRAME      = 0;
-    G_PLAYER_COMBO      = 0;
     G_PLAYER_FRAME_ATK  = 0;
     G_PLAYER_ANIM       = &A_PLAYER_IDLE_FRONT;
     G_PLAYER_ANIM_TIMER = 0;
@@ -344,7 +351,8 @@ void game_init(void)
     G_PLAYER_STATE_     = &STATE_IDLE;
     G_PLAYER_LAST_STATE_= &STATE_IDLE;
 
-    REMEMBER_INCREMENT_COMBO = 0;
+    G_JOYPAD            = 0U;
+    G_LAST_JOYPAD       = 0U;
 
     TAC_REG = 0x07U;
 

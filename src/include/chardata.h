@@ -322,15 +322,15 @@ const T_ANIM_FRAME G_PlayerAttackingFramesFront_2[] =
     {   1   ,S_FLIPX|0x01U  ,8  ,8}
 };
 
-T_ANIM A_PLAYER_IDLE_FRONT = {4, 1, 16, G_PlayerIdleFramesFront};
-T_ANIM A_PLAYER_IDLE_BACK  = {4, 1, 16, G_PlayerIdleFramesBack};
-T_ANIM A_PLAYER_IDLE_LEFT  = {4, 1, 16, G_PlayerIdleFramesLeft};
 T_ANIM A_PLAYER_IDLE_RIGHT = {4, 1, 16, G_PlayerIdleFramesRight};
+T_ANIM A_PLAYER_IDLE_LEFT  = {4, 1, 16, G_PlayerIdleFramesLeft};
+T_ANIM A_PLAYER_IDLE_BACK  = {4, 1, 16, G_PlayerIdleFramesBack};
+T_ANIM A_PLAYER_IDLE_FRONT = {4, 1, 16, G_PlayerIdleFramesFront};
 
-T_ANIM A_PLAYER_WALKING_FRONT = {4, 4, 16, G_PlayerWalkingFramesFront};
-T_ANIM A_PLAYER_WALKING_BACK  = {4, 4, 16, G_PlayerWalkingFramesBack};
-T_ANIM A_PLAYER_WALKING_LEFT  = {4, 2, 16, G_PlayerWalkingFramesLeft};
 T_ANIM A_PLAYER_WALKING_RIGHT = {4, 2, 16, G_PlayerWalkingFramesRight};
+T_ANIM A_PLAYER_WALKING_LEFT  = {4, 2, 16, G_PlayerWalkingFramesLeft};
+T_ANIM A_PLAYER_WALKING_BACK  = {4, 4, 16, G_PlayerWalkingFramesBack};
+T_ANIM A_PLAYER_WALKING_FRONT = {4, 4, 16, G_PlayerWalkingFramesFront};
 
 T_ANIM A_PLAYER_SWORD_1_FRONT = {8, 3, 8, G_PlayerAttackingFramesFront_1};
 T_ANIM A_PLAYER_SWORD_2_FRONT = {8, 3, 6, G_PlayerAttackingFramesFront_2};
@@ -341,10 +341,10 @@ T_ANIM A_PLAYER_SWORD_2_FRONT = {8, 3, 6, G_PlayerAttackingFramesFront_2};
 //     {&A_PLAYER_SWORD_2_FRONT, 0}
 // };
 
-T_STATE STATE_IDLE  = {&A_PLAYER_IDLE_FRONT, 0, 0, 0, 0, &STATE_ATK_1};
-T_STATE STATE_MOVE  = {&A_PLAYER_WALKING_FRONT, 0, 0, 0, 0, &STATE_ATK_1};
-T_STATE STATE_ATK_1 = {&A_PLAYER_SWORD_1_FRONT, 0, 0, 0, 0, &STATE_ATK_2};
-T_STATE STATE_ATK_2 = {&A_PLAYER_SWORD_2_FRONT, 0, 0, 0, 0};
+T_STATE STATE_IDLE  = {&A_PLAYER_IDLE_RIGHT, 0, 0, 0, 0, &STATE_ATK_1};
+T_STATE STATE_MOVE  = {&A_PLAYER_WALKING_RIGHT, &STATE_ATK_1, &STATE_ATK_1, &STATE_ATK_1, &STATE_ATK_1, &STATE_ATK_1};
+T_STATE STATE_ATK_1 = {&A_PLAYER_SWORD_1_FRONT, &STATE_ATK_2, &STATE_ATK_2, &STATE_ATK_2, &STATE_ATK_2, &STATE_ATK_2};
+T_STATE STATE_ATK_2 = {&A_PLAYER_SWORD_2_FRONT, 0, 0, 0, 0, 0};
 
 T_U08 T_PLAYER_COMBO_LENGTH = 2;
 
