@@ -15,8 +15,8 @@ void f_GetJoypad(void);
 void f_GetPlayerState(void);
 void f_MovePlayerSprites(void);
 
-#define TIME_BEFORE_NEXT_ATTACK 16
-
+// ==========================================================================
+// Global var
 T_U32 G_TIMER;
 
 T_PLAYER_DIRECTION G_PLAYER_DIRECTION;
@@ -36,6 +36,9 @@ T_U08 G_LAST_JOYPAD;
 
 T_U08 G_CURRENTFRAMEVAL;
 
+// ==========================================================================
+// This is the main function
+// It will probably be moved to a mainloop function later one
 void main(void)
 {
     G_CURRENTFRAMEVAL = 0U;
@@ -59,25 +62,27 @@ void main(void)
         }
         move_sprite(30,G_CURRENTFRAMEVAL, 144);
 
-        // On mémorise l'état précédent (peut être utile pour les sorties d'état)
+        // Memorize the previous value of important data
         G_PLAYER_LAST_STATE_ = G_PLAYER_STATE_;
         G_PLAYER_LAST_DIR    = G_PLAYER_DIRECTION;
         G_LAST_JOYPAD        = G_JOYPAD;
 
-        // On check le joypad
+        // Read the joypad
         f_GetJoypad();
 
-        // On met à jour l'état du joueur
+        // Update the player state
         f_GetPlayerState();
 
-        // On update les sprites du joueur
+        // Move the player sprites
         f_MovePlayerSprites();
         
-        // Attends la vblank avant de repasser la boucle (pour garder 60fps)
+        // Wait for vblank (ensure max 60fps)
         wait_vbl_done();
     }
 }
 
+// ==========================================================================
+// This function load the sprites
 void f_LoadSprites(void)
 {
     T_U08 i;
@@ -134,6 +139,8 @@ void f_LoadSprites(void)
     SHOW_SPRITES;
 }
 
+// ==========================================================================
+// This function read the joypad and temporarily handles the movement
 void f_GetJoypad(void)
 {
     G_JOYPAD = joypad();
@@ -161,6 +168,10 @@ void f_GetJoypad(void)
     }
 }
 
+// ==========================================================================
+// This function handles the current player state
+// In the future, multiple functions may handle the player state depending
+//   on the game state (in town, in battle, etc...)
 void f_GetPlayerState(void)
 {
     // ==========================================================================
@@ -276,6 +287,8 @@ void f_GetPlayerState(void)
     }
 }
 
+// ==========================================================================
+// This player handles the animation and the position of the player sprites
 void f_MovePlayerSprites(void){
     T_U08 i;
 
@@ -335,7 +348,8 @@ void f_MovePlayerSprites(void){
     }
 }
 
-
+// ==========================================================================
+// This function initialize some values
 void game_init(void)
 {
     G_TIMER             = 0;
