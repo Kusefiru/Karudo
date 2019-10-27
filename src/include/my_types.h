@@ -94,6 +94,9 @@ typedef enum
 #define D_TIME_BEFORE_END  6
 #define D_COOLDOWN_BEFORE_NEXT 12
 
+#define D_MAX_SPEED_X 16
+#define D_MAX_SPEED_Y 16
+
 /*  ------------------------------------------------------------------
  *  Addresses
  *  ------------------------------------------------------------------*/

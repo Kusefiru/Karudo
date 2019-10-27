@@ -38,19 +38,17 @@ T_U08 G_PLAYER_VELOCITY_RIGHT;
 T_U08 G_PLAYER_VELOCITY_LEFT;
 T_U08 G_PLAYER_VELOCITY_UP;
 T_U08 G_PLAYER_VELOCITY_DOWN;
+T_S08 G_PLAYER_VELOCITY_X;
+T_S08 G_PLAYER_VELOCITY_Y;
 
 T_U08 G_JOYPAD;
 T_U08 G_LAST_JOYPAD;
-
-T_U08 G_CURRENTFRAMEVAL;
 
 // ==========================================================================
 // This is the main function
 // It will probably be moved to a mainloop function later one
 void main(void)
 {
-    G_CURRENTFRAMEVAL = 0U;
-    
     game_init();
 
     set_bkg_palette(0,5,area_tiles_palette);
@@ -64,12 +62,6 @@ void main(void)
     set_sprite_prop(30, 0);
 
     while(1){
-        G_CURRENTFRAMEVAL++;
-        if(60 == G_CURRENTFRAMEVAL){
-            G_CURRENTFRAMEVAL = 0U;
-        }
-        move_sprite(30,G_CURRENTFRAMEVAL, 144);
-
         // Memorize the previous value of important data
         G_PLAYER_LAST_STATE_ = G_PLAYER_STATE_;
         G_PLAYER_LAST_DIR    = G_PLAYER_DIRECTION;
@@ -155,28 +147,6 @@ void f_LoadSprites(void)
 void f_GetJoypad(void)
 {
     G_JOYPAD = joypad();
-
-    // ==========================================================================
-    // Will be joypad_update or similar
-    // Only has_moved should be updated here, coordinates update should
-    //    be moved once a proper collision detection system is made.
-    // By the way, we should simply copy joypad to a global var
-    /*if(joypad() & J_RIGHT){
-        G_PLAYER_X++;
-        if(G_PLAYER_X==137) G_PLAYER_X--;
-    }
-    if(joypad() & J_LEFT){
-        G_PLAYER_X--;
-        if(G_PLAYER_X==23) G_PLAYER_X++;
-    }
-    if(joypad() & J_UP){
-        G_PLAYER_Y--;
-        if(G_PLAYER_Y==31) G_PLAYER_Y++;
-    }
-    if(joypad() & J_DOWN){
-        G_PLAYER_Y++;
-        if(G_PLAYER_Y==113) G_PLAYER_Y--;
-    }*/
 }
 
 // ==========================================================================
@@ -303,47 +273,60 @@ void f_GetPlayerState(void)
 //   and its current state
 void f_GetPlayerPos(void)
 {
+    // If the input on left and right has changed
+    if((G_JOYPAD ^ G_LAST_JOYPAD)&(J_LEFT|J_RIGHT)){
+        // Reset the X velocity
+        G_PLAYER_VELOCITY_X = 0;
+    }
+    // If the player is pressing right
     if(G_JOYPAD & J_RIGHT){
-        if(128 != G_PLAYER_VELOCITY_RIGHT){
-            G_PLAYER_VELOCITY_RIGHT += 8;
+        // If the maximum speed on X hasn't been reached
+        if(D_MAX_SPEED_X != G_PLAYER_VELOCITY_X){
+            // Increment the X speed
+            G_PLAYER_VELOCITY_X += 1;
         }
     }
-    else{
-        G_PLAYER_VELOCITY_RIGHT = 0U;
-    }
-
+    // If the player is pressing left
     if(G_JOYPAD & J_LEFT){
-        if(128 != G_PLAYER_VELOCITY_LEFT){
-            G_PLAYER_VELOCITY_LEFT += 8;
+        // If the maximum speed on -X hasn't been reached
+        if(-D_MAX_SPEED_X != G_PLAYER_VELOCITY_X){
+            // Increment the -X speed
+            G_PLAYER_VELOCITY_X -= 1;
         }
     }
-    else{
-        G_PLAYER_VELOCITY_LEFT = 0U;
-    }
 
-    if(G_JOYPAD & J_UP){
-        if(128 != G_PLAYER_VELOCITY_UP){
-            G_PLAYER_VELOCITY_UP += 8;
-        }
+    // If the input on up and down has changed
+    if((G_JOYPAD ^ G_LAST_JOYPAD)&(J_UP|J_DOWN)){
+        // Reset the Y velocity
+        G_PLAYER_VELOCITY_Y = 0;
     }
-    else{
-        G_PLAYER_VELOCITY_UP = 0U;
-    }
-
+    // If the player is pressing down
     if(G_JOYPAD & J_DOWN){
-        if(128 != G_PLAYER_VELOCITY_DOWN){
-            G_PLAYER_VELOCITY_DOWN += 8;
+        // If the maximum speed on Y hasn't been reached
+        if(D_MAX_SPEED_Y != G_PLAYER_VELOCITY_Y){
+            // Increment the Y speed
+            G_PLAYER_VELOCITY_Y += 1;
         }
     }
-    else{
-        G_PLAYER_VELOCITY_DOWN = 0U;
+    // If the player is pressing up
+    if(G_JOYPAD & J_UP){
+        // If the maximum speed on -Y hasn't been reached
+        if(-D_MAX_SPEED_Y != G_PLAYER_VELOCITY_Y){
+            // Increment the -Y speed
+            G_PLAYER_VELOCITY_Y -= 1;
+        }
     }
 
-    G_PLAYER_NEW_X += (T_U16)(G_PLAYER_VELOCITY_RIGHT << 2);
-    G_PLAYER_NEW_X -= (T_U16)(G_PLAYER_VELOCITY_LEFT << 2);
-    G_PLAYER_NEW_Y += (T_U16)(G_PLAYER_VELOCITY_DOWN << 2);
-    G_PLAYER_NEW_Y -= (T_U16)(G_PLAYER_VELOCITY_UP << 2);
+    // Here in the future we will take care of alternate states
+    // For exemple, slow down the player if they are attacking
+    //   or immobilize them during specific actions
 
+    // Increment the internal sub counters
+    G_PLAYER_NEW_X = G_PLAYER_NEW_X + (T_U16)(G_PLAYER_VELOCITY_X*16);
+    G_PLAYER_NEW_Y = G_PLAYER_NEW_Y + (T_U16)(G_PLAYER_VELOCITY_Y*16);
+
+    // The player position corresponds to the upper part of the counters
+    // Potentially, we can extract this value directly instead of having two vars
     G_PLAYER_X = (T_U08)((G_PLAYER_NEW_X & 0xFF00) >> 8);
     G_PLAYER_Y = (T_U08)((G_PLAYER_NEW_Y & 0xFF00) >> 8);
 }
@@ -428,10 +411,12 @@ void game_init(void)
     G_PLAYER_STATE_     = &STATE_IDLE;
     G_PLAYER_LAST_STATE_= &STATE_IDLE;
 
-    G_PLAYER_VELOCITY_RIGHT   = 0;
-    G_PLAYER_VELOCITY_LEFT    = 0;
-    G_PLAYER_VELOCITY_UP      = 0;
-    G_PLAYER_VELOCITY_DOWN    = 0;
+    G_PLAYER_VELOCITY_RIGHT   = 0U;
+    G_PLAYER_VELOCITY_LEFT    = 0U;
+    G_PLAYER_VELOCITY_UP      = 0U;
+    G_PLAYER_VELOCITY_DOWN    = 0U;
+    G_PLAYER_VELOCITY_X       = 0;
+    G_PLAYER_VELOCITY_Y       = 0;
 
     G_JOYPAD            = 0U;
     G_LAST_JOYPAD       = 0U;
