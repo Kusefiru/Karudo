@@ -13,6 +13,7 @@ void timer_interrupt(void);
 void f_LoadSprites(void);
 void f_GetJoypad(void);
 void f_GetPlayerState(void);
+void f_GetPlayerPos(void);
 void f_MovePlayerSprites(void);
 
 // ==========================================================================
@@ -25,11 +26,18 @@ T_STATE *G_PLAYER_STATE_;
 T_STATE *G_PLAYER_LAST_STATE_;
 T_U08 G_PLAYER_TILECOUNT;
 T_U08 G_PLAYER_X;
+T_U16 G_PLAYER_NEW_X;
 T_U08 G_PLAYER_Y;
+T_U16 G_PLAYER_NEW_Y;
 T_ANIM *G_PLAYER_ANIM;
 T_U08 G_PLAYER_ANIM_TIMER;
 T_U08 G_PLAYER_FRAME;
-T_U08 G_PLAYER_FRAME_ATK;
+T_U08 G_PLAYER_TIME_BEFORE_ATK_ENDS;
+
+T_U08 G_PLAYER_VELOCITY_RIGHT;
+T_U08 G_PLAYER_VELOCITY_LEFT;
+T_U08 G_PLAYER_VELOCITY_UP;
+T_U08 G_PLAYER_VELOCITY_DOWN;
 
 T_U08 G_JOYPAD;
 T_U08 G_LAST_JOYPAD;
@@ -72,6 +80,9 @@ void main(void)
 
         // Update the player state
         f_GetPlayerState();
+
+        // Update the player position
+        f_GetPlayerPos();
 
         // Move the player sprites
         f_MovePlayerSprites();
@@ -150,7 +161,7 @@ void f_GetJoypad(void)
     // Only has_moved should be updated here, coordinates update should
     //    be moved once a proper collision detection system is made.
     // By the way, we should simply copy joypad to a global var
-    if(joypad() & J_RIGHT){
+    /*if(joypad() & J_RIGHT){
         G_PLAYER_X++;
         if(G_PLAYER_X==137) G_PLAYER_X--;
     }
@@ -165,7 +176,7 @@ void f_GetJoypad(void)
     if(joypad() & J_DOWN){
         G_PLAYER_Y++;
         if(G_PLAYER_Y==113) G_PLAYER_Y--;
-    }
+    }*/
 }
 
 // ==========================================================================
@@ -182,7 +193,7 @@ void f_GetPlayerState(void)
     // If the player pressed A and A was not pressed
     if((J_A & G_JOYPAD) && !(J_A & G_LAST_JOYPAD)){
         // If the current frame allows to move to the next attack
-        if(G_PLAYER_FRAME_ATK < D_TIME_BEFORE_END){
+        if(G_PLAYER_TIME_BEFORE_ATK_ENDS < D_TIME_BEFORE_END){
             // If it is A & Right
             if(G_JOYPAD & J_RIGHT){
                 G_PLAYER_STATE_ = G_PLAYER_STATE_->NextState_Right;
@@ -208,7 +219,7 @@ void f_GetPlayerState(void)
     // Else if A was not pressed
     else{
         // If the player is not attacking
-        if (0U == G_PLAYER_FRAME_ATK){
+        if (0U == G_PLAYER_TIME_BEFORE_ATK_ENDS){
             G_PLAYER_STATE_ = &STATE_IDLE;
             // If movement has been inputted
             if(G_JOYPAD & 0x0FU){
@@ -253,7 +264,7 @@ void f_GetPlayerState(void)
             // If the previous state was an attack
             // (we check only if it wasn't STATE_MOVE since if we are here, the previous state wasn't STATE_IDLE)
             if(G_PLAYER_LAST_STATE_ != &STATE_MOVE){
-                G_PLAYER_FRAME_ATK = D_TIME_BEFORE_END + D_TIME_BEFORE_END;
+                G_PLAYER_TIME_BEFORE_ATK_ENDS = D_COOLDOWN_BEFORE_NEXT;
             }
         }
         // Else if the player is moving
@@ -264,7 +275,7 @@ void f_GetPlayerState(void)
         else{
             G_PLAYER_ANIM = G_PLAYER_STATE_->Anim; // + G_PLAYER_DIRECTION;
             // Calculate the length of the move
-            G_PLAYER_FRAME_ATK = G_PLAYER_ANIM->NbFrame * G_PLAYER_ANIM->FrameLength;
+            G_PLAYER_TIME_BEFORE_ATK_ENDS = G_PLAYER_ANIM->NbFrame * G_PLAYER_ANIM->FrameLength;
         }
 
         G_PLAYER_ANIM_TIMER = 0U;
@@ -288,7 +299,57 @@ void f_GetPlayerState(void)
 }
 
 // ==========================================================================
-// This player handles the animation and the position of the player sprites
+// This function handles the player position depending on the joypad
+//   and its current state
+void f_GetPlayerPos(void)
+{
+    if(G_JOYPAD & J_RIGHT){
+        if(128 != G_PLAYER_VELOCITY_RIGHT){
+            G_PLAYER_VELOCITY_RIGHT += 8;
+        }
+    }
+    else{
+        G_PLAYER_VELOCITY_RIGHT = 0U;
+    }
+
+    if(G_JOYPAD & J_LEFT){
+        if(128 != G_PLAYER_VELOCITY_LEFT){
+            G_PLAYER_VELOCITY_LEFT += 8;
+        }
+    }
+    else{
+        G_PLAYER_VELOCITY_LEFT = 0U;
+    }
+
+    if(G_JOYPAD & J_UP){
+        if(128 != G_PLAYER_VELOCITY_UP){
+            G_PLAYER_VELOCITY_UP += 8;
+        }
+    }
+    else{
+        G_PLAYER_VELOCITY_UP = 0U;
+    }
+
+    if(G_JOYPAD & J_DOWN){
+        if(128 != G_PLAYER_VELOCITY_DOWN){
+            G_PLAYER_VELOCITY_DOWN += 8;
+        }
+    }
+    else{
+        G_PLAYER_VELOCITY_DOWN = 0U;
+    }
+
+    G_PLAYER_NEW_X += (T_U16)(G_PLAYER_VELOCITY_RIGHT << 2);
+    G_PLAYER_NEW_X -= (T_U16)(G_PLAYER_VELOCITY_LEFT << 2);
+    G_PLAYER_NEW_Y += (T_U16)(G_PLAYER_VELOCITY_DOWN << 2);
+    G_PLAYER_NEW_Y -= (T_U16)(G_PLAYER_VELOCITY_UP << 2);
+
+    G_PLAYER_X = (T_U08)((G_PLAYER_NEW_X & 0xFF00) >> 8);
+    G_PLAYER_Y = (T_U08)((G_PLAYER_NEW_Y & 0xFF00) >> 8);
+}
+
+// ==========================================================================
+// This function handles the animation and the position of the player sprites
 void f_MovePlayerSprites(void){
     T_U08 i;
 
@@ -331,9 +392,9 @@ void f_MovePlayerSprites(void){
     // Then we update our global values...
     G_PLAYER_ANIM_TIMER--;
 
-    // Update the G_PLAYER_FRAME_ATK var only if it is different from 0
-    if(0U != G_PLAYER_FRAME_ATK){
-        G_PLAYER_FRAME_ATK--;
+    // Update the G_PLAYER_TIME_BEFORE_ATK_ENDS var only if it is different from 0
+    if(0U != G_PLAYER_TIME_BEFORE_ATK_ENDS){
+        G_PLAYER_TIME_BEFORE_ATK_ENDS--;
     }
 
     // ==========================================================================
@@ -356,14 +417,21 @@ void game_init(void)
     G_PLAYER_DIRECTION  = IS_FACING_DOWN;
     G_PLAYER_LAST_DIR   = IS_FACING_DOWN;
     G_PLAYER_FRAME      = 0;
-    G_PLAYER_FRAME_ATK  = 0;
+    G_PLAYER_TIME_BEFORE_ATK_ENDS   = 0;
     G_PLAYER_ANIM       = &A_PLAYER_IDLE_FRONT;
     G_PLAYER_ANIM_TIMER = 0;
     G_PLAYER_TILECOUNT  = 0;
-    G_PLAYER_X 		    = 64U;
-    G_PLAYER_Y		    = 64U;
+    G_PLAYER_X 		    = 0x40U;
+    G_PLAYER_NEW_X      = 0x4000U;
+    G_PLAYER_Y		    = 0x40U;
+    G_PLAYER_NEW_Y      = 0x4000U;
     G_PLAYER_STATE_     = &STATE_IDLE;
     G_PLAYER_LAST_STATE_= &STATE_IDLE;
+
+    G_PLAYER_VELOCITY_RIGHT   = 0;
+    G_PLAYER_VELOCITY_LEFT    = 0;
+    G_PLAYER_VELOCITY_UP      = 0;
+    G_PLAYER_VELOCITY_DOWN    = 0;
 
     G_JOYPAD            = 0U;
     G_LAST_JOYPAD       = 0U;

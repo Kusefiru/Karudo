@@ -92,6 +92,7 @@ typedef enum
  *  Defines
  *  ------------------------------------------------------------------*/
 #define D_TIME_BEFORE_END  6
+#define D_COOLDOWN_BEFORE_NEXT 12
 
 /*  ------------------------------------------------------------------
  *  Addresses
