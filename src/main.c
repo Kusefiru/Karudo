@@ -2,8 +2,7 @@
 #include <rand.h>
 #include <gb/drawing.h>
 #include <gb/cgb.h>
-#include "room.h"
-#include "map.h"
+#include "map_functions.h"
 #include "chardata.h"
 
 void game_init(void);

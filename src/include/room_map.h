@@ -25,4 +25,7 @@
 extern T_U08 metatiles[];
 extern T_U08 map_room[];
 
+extern T_U08 area_tiles[];
+extern const T_U16 area_tiles_palette[];
+
 /* End of ROOM_MAP.H */
