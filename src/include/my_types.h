@@ -102,5 +102,6 @@ typedef enum
  *  ------------------------------------------------------------------*/
 #define GBC_BG_MAP_DATA_1   0x9800
 #define GBC_BG_MAP_DATA_2   0x9C00
+#define GBC_OAM_SPRITE_DATA 0xFE00
 
 #endif

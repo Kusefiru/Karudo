@@ -1,10 +1,10 @@
 /*  ==================================================================
- *  Header associé à map.c
+ *  Header associé à map_functions.c
  * 
  *  ==================================================================*/
 
-#ifndef MAP_H
-#define MAP_H
+#ifndef MAP_FUNCTIONS_H
+#define MAP_FUNCTIONS_H
 
 /*  ------------------------------------------------------------------
  *  Liste des includes
