@@ -323,32 +323,40 @@ void f_GetPlayerPos(void)
     // For exemple, slow down the player if they are attacking
     //   or immobilize them during specific actions
 
-    // Increment the internal sub counters
-    G_PLAYER_NEW_X += (T_U16)(G_PLAYER_VELOCITY_X*16);
-
     // The player position corresponds to the upper part of the counters
     // Potentially, we can extract this value directly instead of having two vars
+    // Increment the X counter and thus the X position of the player
+    G_PLAYER_NEW_X += (T_U16)(G_PLAYER_VELOCITY_X*16);
     G_PLAYER_X = (T_U08)((G_PLAYER_NEW_X & 0xFF00) >> 8);
 
+    // Calculate the current player top-left metatile (with only X updated)
     G_PLAYER_CURR_METATILE = ((G_PLAYER_Y-16) >> 4);
     G_PLAYER_CURR_METATILE *= 10;
     G_PLAYER_CURR_METATILE += ((G_PLAYER_X-8) >> 4);
 
+    // If the player goes right
     if (G_PLAYER_VELOCITY_X > 0) {
+        // If the top-right metatile is solid
         if (map_room[G_PLAYER_CURR_METATILE+1] <= 1) {
+            // Push the player right next to that metatile
             G_PLAYER_X = (((G_PLAYER_X-8) >> 4) << 4) + 8; // 8 for screen x-offset
             G_PLAYER_NEW_X = (T_U16)(G_PLAYER_X << 8);
             G_PLAYER_VELOCITY_X = 0;
+        // Else if the player is not contained in one metatile and the bottom-right is solid
         } else if ((G_PLAYER_Y % 16 != 0) && (map_room[G_PLAYER_CURR_METATILE+11] <= 1)) {
             G_PLAYER_X = (((G_PLAYER_X-8) >> 4) << 4) + 8; // 8 for screen x-offset
             G_PLAYER_NEW_X = (T_U16)(G_PLAYER_X << 8);
             G_PLAYER_VELOCITY_X = 0;
         }
+    // Else if the player goes left
     } else if (G_PLAYER_VELOCITY_X < 0) {
+        // If the top-left is solid
         if (map_room[G_PLAYER_CURR_METATILE] <= 1) {
+            // Push the player right next to that metatile
             G_PLAYER_X = (((G_PLAYER_X-8) >> 4) << 4) + 24; // 16 for tile + 8 for screen x-offset
             G_PLAYER_NEW_X = (T_U16)(G_PLAYER_X << 8);
             G_PLAYER_VELOCITY_X = 0;
+        // Else if the player is not contained in one metatile and the bottom-left is solid
         } else if ((G_PLAYER_Y % 16 != 0) && (map_room[G_PLAYER_CURR_METATILE+10] <= 1)) {
             G_PLAYER_X = (((G_PLAYER_X-8) >> 4) << 4) + 24; // 16 for tile + 8 for screen x-offset
             G_PLAYER_NEW_X = (T_U16)(G_PLAYER_X << 8);
@@ -356,42 +364,44 @@ void f_GetPlayerPos(void)
         }
     }
 
+    // Increment the Y counter and thus the Y position of the player
     G_PLAYER_NEW_Y += (T_U16)(G_PLAYER_VELOCITY_Y*16);
     G_PLAYER_Y = (T_U08)((G_PLAYER_NEW_Y & 0xFF00) >> 8);
+
+    // Calculate the current player top-left metatile (with only Y updated)
     G_PLAYER_CURR_METATILE = ((G_PLAYER_Y-16) >> 4);
     G_PLAYER_CURR_METATILE *= 10;
     G_PLAYER_CURR_METATILE += ((G_PLAYER_X-8) >> 4);
     
+    // If the player goes down
     if (G_PLAYER_VELOCITY_Y > 0) {
+        // If the bottom_left is solid
         if (map_room[G_PLAYER_CURR_METATILE+10] <= 1) {
+            // Push the player right next to that metatile
             G_PLAYER_Y = (((G_PLAYER_Y-16) >> 4) << 4) + 16; // 16 for screen y-offset
             G_PLAYER_NEW_Y = (T_U16)(G_PLAYER_Y << 8);
             G_PLAYER_VELOCITY_Y = 0;
+        // Else if the player is not contained in one metatile and the bottom-right is solid
         } else if (((G_PLAYER_X-8) % 16 != 0) && (map_room[G_PLAYER_CURR_METATILE+11] <= 1)) {
             G_PLAYER_Y = (((G_PLAYER_Y-16) >> 4) << 4) + 16; // 16 for screen y-offset
             G_PLAYER_NEW_Y = (T_U16)(G_PLAYER_Y << 8);
             G_PLAYER_VELOCITY_Y = 0;
         }
+    // Else if the player goes up
     } else if (G_PLAYER_VELOCITY_Y < 0) {
+        // If the top-left is solid
         if (map_room[G_PLAYER_CURR_METATILE] <= 1) {
+            // Push the player right next to that metatile
             G_PLAYER_Y = (((G_PLAYER_Y-16) >> 4) << 4) + 32; // 16 for tile + 16 for screen y-offset
             G_PLAYER_NEW_Y = (T_U16)(G_PLAYER_Y << 8);
             G_PLAYER_VELOCITY_Y = 0;
+        // Else if the player is not contained in one metatile and the top-right is solid
         } else if (((G_PLAYER_X-8) % 16 != 0) && (map_room[G_PLAYER_CURR_METATILE+1] <= 1)) {
             G_PLAYER_Y = (((G_PLAYER_Y-16) >> 4) << 4) + 32; // 16 for tile + 16 for screen y-offset
             G_PLAYER_NEW_Y = (T_U16)(G_PLAYER_Y << 8);
             G_PLAYER_VELOCITY_Y = 0;
         }
     }
-
-    //G_MAP_CURR_METATILE_VAL = map_room[G_PLAYER_CURR_METATILE];
-    /*if(G_MAP_CURR_METATILE_VAL <= 1) {
-        G_PLAYER_NEW_X -= (T_U16)(G_PLAYER_VELOCITY_X*16);
-        G_PLAYER_X = (T_U08)((G_PLAYER_NEW_X & 0xFF00) >> 8);
-        G_PLAYER_NEW_Y -= (T_U16)(G_PLAYER_VELOCITY_Y*16);
-        G_PLAYER_Y = (T_U08)((G_PLAYER_NEW_Y & 0xFF00) >> 8);
-    }*/
-    
 }
 
 // ==========================================================================
